@@ -29,7 +29,7 @@ If left blank, Rand(osu!) will generate with a random seed. You will not be able
 
 * **True Random**
   * *Recommended: Off*
-  * Rand(osu!) uses original map as a reference so that it won't create a chaotic mess. Details are written below.
+  * Rand(osu!) uses original map as a reference so that it won't create an absolute mess. Details are written below.
   * This option will ignore all that and create a truly chaotic masterpiece.
 
 * **Min Scale Factor & Max Scale Factor**
@@ -85,10 +85,10 @@ Randomized .osu files will be created right where your original .osu file is. He
 * **osu!mania**
   * Scatter Off
     * Difficulty name: Randomized(*Chance of Switching Columns*%)\_*Original Difficulty Name*\_*Timestamp*
-    * File name: rand(*Chance of Switching Colors*)\_*Original Difficulty Name*\_*Timestamp*.osu
+    * File name: rand(*Chance of Switching Columns*)\_*Original Difficulty Name*\_*Timestamp*.osu
   * Scatter On
     * Difficulty name: Scattered(*Chance of Switching Columns*%)\_*Original Difficulty Name*\_*Timestamp*
-    * File name: scat(*Chance of Switching Colors*)\_*Original Difficulty Name*\_*Timestamp*.osu
+    * File name: scat(*Chance of Switching Columns*)\_*Original Difficulty Name*\_*Timestamp*.osu
 
 ### If the seed is given
 
@@ -105,13 +105,13 @@ Randomized .osu files will be created right where your original .osu file is. He
 * **osu!mania**
   * Scatter Off
     * Difficulty name: Randomized(*Chance of Switching Columns*%)\_*Seed*_*Original Difficulty Name*
-    * File name: rand(*Chance of Switching Colors*)\_*Seed*_*Original Difficulty Name*.osu
+    * File name: rand(*Chance of Switching Columns*)\_*Seed*_*Original Difficulty Name*.osu
   * Scatter On
     * Difficulty name: Scattered(*Chance of Switching Columns*%)\_*Seed*_*Original Difficulty Name*
-    * File name: scat(*Chance of Switching Colors*)\_*Seed*_*Original Difficulty Name*.osu
+    * File name: scat(*Chance of Switching Columns*)\_*Seed*_*Original Difficulty Name*.osu
 
 ## TODO
 
-* Borrow some elements from Malody-to-osu
-  * Auto-update
+* Borrow some elements from Malody2osu
+  * Auto-update - will release .exe of Rand(osu!) once this is complete
   * Crashlog
