@@ -1,8 +1,8 @@
 # Rand(osu!)
 
 Randomizes patterns in any maps. Supports all modes.\
-Written in Python 3.7\
-Tested only in Windows, normal functionality on the other OS's not guaranteed.
+Written in Python 3.7.\
+Tested only on Windows, normal functionality on the other OS's not guaranteed.
 
 ## How to use
 
@@ -49,9 +49,9 @@ If left blank, Rand(osu!) will use the current timestamp (current time in second
   * Rand(osu!) will keep the size of all notes and only change the color of some.
   * This argument controls the chance of changing given note's color.
   * In official taiko games, the chances are:
-    * Abekobe(あべこべ): 100%
-    * Detarame(でたらめ): 50%
-    * Kimagure(きまぐれ): 20%
+    * Abekobe(あべこべ): 100% - *Mirror*
+    * Detarame(でたらめ): 50% - *Random*
+    * Kimagure(きまぐれ): 20% - *Semi-random*
 
 ### osu!mania
 
@@ -90,6 +90,7 @@ Randomized .osu files will be created right where your original .osu file is. He
 
 ## TODO
 
-* Borrow some elements from Malody2osu
-  * Auto-update - will release .exe of Rand(osu!) once this is complete
-  * Crashlog
+* Language settings
+* Calculate the end of sliders to prevent sliderends going out of bounds
+  * Any help about this is greatly appreciated
+* Faster and Better random

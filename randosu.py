@@ -9,11 +9,11 @@ import ctypes
 import traceback
 from datetime import datetime
 from tqdm import tqdm
-from functions import intro, crash, choose
+from functions import intro, crash, choose, exit
 
 
 version = '0.1.0'
-date = '2019-11-07'
+date = '2019-11-08'
 
 # Change window title
 ctypes.windll.kernel32.SetConsoleTitleW(f'Rand(osu!) v{version}')
@@ -27,8 +27,8 @@ if IsEXE:
     os.chdir(os.path.dirname(sys.executable))
 
 print(f'Rand(osu!) v{version}')
-print(intro())
 print(date + '\n')
+print(intro())
 
 ### UPDATING ###
 # Add ':' to disallow user to view this message by dragging files
@@ -113,40 +113,47 @@ try:
                 sys.exit()
 
 except Exception as e:
-    print(f'Connection to GitHub failed. ({e})')
+    print(f'Connection to GitHub failed. ({e})\n')
 
 if len(sys.argv) == 1:
-    print('Open an .osu file with this program (drag the file in) to randomize!')
-    print('Press any key to exit.')
-    getch()
-    sys.exit()
+    exit('Open an .osu file with this program (drag the file in) to randomize!')
 
 if len(sys.argv) > 2:
-    print('Please drag a single .osu file.')
-    print('Press any key to exit.')
-    getch()
-    sys.exit()
+    exit('Please drag in a single file.')
+
+if os.path.splitext(sys.argv[1])[1].lower() != '.osu':
+    exit('Please drag in an .osu file.')
+
 
 ### RANDOMIZING ###
 try:
     with open(sys.argv[1], encoding='utf-8') as osu:
         content = osu.readlines()
     
-    # 0: Standard, 1: Taiko, 2: CTB, 3: Mania
-    gamemode = [int(i.split(':')[1]) for i in content if i.split(':')[0] == 'Mode'][0]
+    try:
+        # 0: Standard, 1: Taiko, 2: CTB, 3: Mania
+        gamemode = [int(i.split(':')[1]) for i in content if i.split(':')[0] == 'Mode'][0]
+    
+    except:
+        exit('Import failed. The .osu file is invalid.')
     
     if gamemode == 0:
-        print("mode: standard")
+        print("Mode: standard")
         std.randosu(sys.argv[1], content)
     elif gamemode == 1:
-        print("mode: taiko")
+        print("Mode: taiko")
         taiko.randosu(sys.argv[1], content)
     elif gamemode == 2:
-        print("mode: catch")
+        print("Mode: catch")
         catch.randosu(sys.argv[1], content)
     elif gamemode == 3:
-        print("mode: mania")
+        print("Mode: mania")
         mania.randosu(sys.argv[1], content)
+    else:
+        print("Mode: unknown")
+        exit("This is intentional... Right?")
+
+    exit('Press F5 on osu! to try out the result!')
 
 ### GENERATING CRASHLOG ###
 except Exception as e:
@@ -159,9 +166,6 @@ except Exception as e:
         c.write('If you would like to tell the dev about this issue, please attach the file above with this crash report.\n')
         c.write('DO NOT EDIT ANYTHING WRITTEN HERE.\n\n')
         c.write(traceback.format_exc())
-    print(f'\nThe crash log has been saved as {crashlog}.')
-    print('Please tell the dev about this!')
     webbrowser.open('https://github.com/jakads/Randosu/issues')
-    print('Press any key to exit.')
-    getch()
-    sys.exit()
+    print(f'\nThe crash log has been saved as {crashlog}.')
+    exit('Please tell the dev about this!')

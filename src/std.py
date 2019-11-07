@@ -5,63 +5,55 @@ from random import seed, randint, uniform
 from time import time
 from math import sin, cos, pi
 from pathvalidate import sanitize_filename
-from functions import choose
+from functions import choose, inputnum
 
 def randosu(path, content):
-    # Dictionary List for notes
-    notes = []
-    
-    # Change Stack Leniency to 0
-    for c in content:
-        if c.startswith('StackLeniency:'):
-            content[content.index(c)] = 'StackLeniency:0\n'
-            break
-    
-    objindex = content.index('[HitObjects]\n')
-    
-    # Parse notes from the next row of [HitObjects] to EOF
-    for c in content[objindex+1:]:
-        # Syntax: x, y, extra
-        content_split = c.split(',')
-        note_x = int(content_split[0])
-        note_y = int(content_split[1])
-        note_ms = int(content_split[2])
-        note_extra = content_split[3:]
-        notes.append({
-            'x': note_x,
-            'y': note_y,
-            'ms': note_ms,
-            'extra': note_extra,
-            'isSlider': len(content_split) > 7
-        })
+    try:
+        # Dictionary List for notes
+        notes = []
+        
+        # Change Stack Leniency to 0
+        for c in content:
+            if c.startswith('StackLeniency:'):
+                content[content.index(c)] = 'StackLeniency:0\n'
+                break
+        
+        objindex = content.index('[HitObjects]\n')
+        
+        # Parse notes from the next row of [HitObjects] to EOF
+        for c in content[objindex+1:]:
+            # Syntax: x, y, extra
+            content_split = c.split(',')
+            note_x = int(content_split[0])
+            note_y = int(content_split[1])
+            note_ms = int(content_split[2])
+            note_extra = content_split[3:]
+            notes.append({
+                'x': note_x,
+                'y': note_y,
+                'ms': note_ms,
+                'extra': note_extra,
+                'isSlider': len(content_split) > 7
+            })
+
+    except:
+        exit('Import failed. The .osu file is invalid.')
     
     # Random Seed input
-    print('read success')
-    randseed = input('seed(optional): ')
+    print('Import success.')
+    randseed = input('Seed(optional): ')
     
     # If no seed is given, use current timestamp as the seed
     if randseed == '':
         randseed = int(time())
     seed(randseed)
     
-    print('True Random? (Y/N)')
+    print('Enable True Random? (Y/N)')
     TrueRandom = True if choose() else False
     
     if not TrueRandom:
-        while True:
-            try:
-                min = input('min scale factor(default 0.5): ')
-                if min == '':
-                    min = 0.5
-                min = float(min)
-    
-                max = input('max scale factor(default 1.5): ')
-                if max == '':
-                    max = 1.5
-                max = float(max)
-                break
-            except:
-                print('number plz')
+        min = inputnum('Min Scale Factor(Default: 0.8): ', 0.8)
+        max = inputnum('Max Scale Factor(Default: 1.5): ', 1.5)
     
         # I bet someone would try this so
         if min > max:
@@ -69,15 +61,7 @@ def randosu(path, content):
             min = max
             max = tmp
     
-    while True:
-        try:
-            red = input('chance of red anchors(%, default 25): ')
-            if red == '':
-                red = 25
-            red = float(red)
-            break
-        except:
-            print('number plz')
+    red = inputnum('Chance of Red Anchors(%, default 25): ', 25)
     
     if red > 100:
         red = 100
@@ -171,5 +155,4 @@ def randosu(path, content):
         for n in randnotes:
             osu.write(f'{n["x"]},{n["y"]},{n["ms"]},{",".join(n["extra"])}')
     
-    print('done')
-    getch()
+    print(f'\nSuccessfully created {filename}!')

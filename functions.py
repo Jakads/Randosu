@@ -1,3 +1,4 @@
+import sys
 from random import choices, shuffle
 from msvcrt import getch
 
@@ -47,3 +48,19 @@ def choose():
         
     else:
         return 1
+
+def exit(message):
+    print(message)
+    print('Press any key to exit.')
+    getch()
+    sys.exit()
+
+def inputnum(message, default):
+    while True:
+        try:
+            i = input(message)
+            if i == '':
+                i = default
+            return float(i)
+        except:
+            print('Please insert a number.')

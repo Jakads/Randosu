@@ -4,58 +4,56 @@ from random import seed, randint, uniform
 from time import time
 from pathvalidate import sanitize_filename
 from msvcrt import getch
+from functions import inputnum
 
 def randosu(path, content):
-    # Dictionary List for notes
-    notes = []
-    
-    # Dictionary List for other notes (Sliders, Spinners)
-    othernotes = []
-    
-    objindex = content.index('[HitObjects]\n')
-    
-    # Parse notes from the next row of [HitObjects] to EOF
-    for c in content[objindex+1:]:
-        # Syntax: x, y, extra
-        content_split = c.split(',')
-    
-        # Normal note is either 1 or 5(new combo)
-        if int(content_split[3]) % 2 != 1:
-            othernotes.append(c)
+    try:
+        # Dictionary List for notes
+        notes = []
         
-        else:
-            note_extra1 = content_split[:4]
-            note_type = content_split[4]
-            note_extra2 = content_split[5:]
-            notes.append({
-                'extra1': note_extra1,
-                'type': note_type,
-                'extra2': note_extra2
-            })
+        # Dictionary List for other notes (Sliders, Spinners)
+        othernotes = []
+        
+        objindex = content.index('[HitObjects]\n')
+        
+        # Parse notes from the next row of [HitObjects] to EOF
+        for c in content[objindex+1:]:
+            # Syntax: x, y, extra
+            content_split = c.split(',')
+        
+            # Normal note is either 1 or 5(new combo)
+            if int(content_split[3]) % 2 != 1:
+                othernotes.append(c)
+            
+            else:
+                note_extra1 = content_split[:4]
+                note_type = content_split[4]
+                note_extra2 = content_split[5:]
+                notes.append({
+                    'extra1': note_extra1,
+                    'type': note_type,
+                    'extra2': note_extra2
+                })
+    
+    except:
+        exit('Import failed. The .osu file is invalid.')
     
     # Random Seed input
-    print('read success')
-    randseed = input('seed(optional): ')
+    print('Import success.')
+    randseed = input('Seed(optional): ')
     
     # If no seed is given, use current timestamp as the seed
     if randseed == '':
         randseed = int(time())
     seed(randseed)
     
+    print("Kimagure=20%, Detarame=50%, Abekobe(Mirror)=100%")
     while True:
-        try:
-            print("Kimagure=20%, Detarame=50%, Abekobe(Mirror)=100%")
-            switch = input('chance of switching colors(%, default 50): ')
-            if switch == '':
-                switch = 50
-            switch = float(switch)
-        except:
-            print('number plz')
-            continue
+        switch = inputnum('Chance of Switching Colors(%, default 50): ', 50)
         if switch > 100:
             switch = 100
         if switch <= 0:
-            print("what's the point?")
+            print("What's the point?")
         else:
             break
     
@@ -98,5 +96,4 @@ def randosu(path, content):
         for n in othernotes:
             osu.write(n)
     
-    print('done')
-    getch()
+    print(f'\nSuccessfully created {filename}!')
