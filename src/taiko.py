@@ -1,9 +1,9 @@
 import os
 import sys
-from msvcrt import getch
 from random import seed, randint, uniform
 from time import time
 from pathvalidate import sanitize_filename
+from msvcrt import getch
 
 def randosu(path, content):
     # Dictionary List for notes
@@ -36,8 +36,11 @@ def randosu(path, content):
     # Random Seed input
     print('read success')
     randseed = input('seed(optional): ')
-    if randseed != '':
-        seed(randseed)
+    
+    # If no seed is given, use current timestamp as the seed
+    if randseed == '':
+        randseed = int(time())
+    seed(randseed)
     
     while True:
         try:
@@ -62,22 +65,9 @@ def randosu(path, content):
             # Exclude '\n'
             diffname = c.split(':', 1)[1][:-1]
             index = content.index(c)
-    
-            if randseed == '':
-                content[index] = f'Version:Randomized({switch}%)_{diffname}_{int(time())}\n'
-                filename = f'{os.path.dirname(path)}\\rand({switch})_{sanitize_filename(diffname)}_{int(time())}.osu'
-    
-            # Example:
-            # Diffname: Randomized(50.0%)_Insane_1572968652
-            # Filename: ~~~.osu => rand50.0_~~~_1572968652.osu
-    
-            else:
-                content[index] = f'Version:Randomized({switch}%)_{diffname} (Seed:{randseed})\n'
-                filename = f'{os.path.dirname(path)}\\rand({switch})_{randseed}_{sanitize_filename(diffname)}'
-    
-            # Example:
-            # Diffname: Randomized(100.0%)_Expert (Seed:joe mama)
-            # Filename: ~~~.osu => rand100.0_joe mama_~~~.osu
+            
+            content[index] = f'Version:Randomized({switch}%)_{diffname} (Seed:{randseed})\n'
+            filename = f'{os.path.dirname(path)}\\rand({switch})_{randseed}_{sanitize_filename(diffname)}'
     
     # Randomize position of the notes
     for n in notes:

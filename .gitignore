@@ -1,0 +1,4 @@
+*.log
+*.osu
+__pycache__/
+src/__pycache__/
