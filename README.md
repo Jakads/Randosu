@@ -6,7 +6,9 @@ Tested only on Windows, normal functionality on the other OS's not guaranteed.
 
 ## How to use
 
-Drag an .osu file into randosu.py / randosu.exe and follow the instructions.
+Drag an .osu file into randosu.py / randosu.exe and follow the instructions.\
+Like this:\
+![Yeet](https://cdn.discordapp.com/attachments/163634681500270593/642064497707581461/unknown.png)
 
 ## How to use like a ***GAMER***
 
