@@ -29,7 +29,7 @@ If left blank, Rand(osu!) will use the current timestamp (current time in second
 
 * **True Random**
   * *Recommended: Off*
-  * Rand(osu!) uses original map as a reference so that it won't create a chaotic mess. Details are written below.
+  * Rand(osu!) uses original map as a reference so that it won't create an absolute mess. Details are written below.
   * This option will ignore all that and create a truly chaotic masterpiece.
 
 * **Min Scale Factor & Max Scale Factor**
@@ -83,13 +83,13 @@ Randomized .osu files will be created right where your original .osu file is. He
 * **osu!mania**
   * Scatter Off
     * Difficulty name: Randomized(*Chance of Switching Columns*%)\_*Seed*_*Original Difficulty Name*
-    * File name: rand(*Chance of Switching Colors*)\_*Seed*_*Original Difficulty Name*.osu
+    * File name: rand(*Chance of Switching Columns*)\_*Seed*_*Original Difficulty Name*.osu
   * Scatter On
     * Difficulty name: Scattered(*Chance of Switching Columns*%)\_*Seed*_*Original Difficulty Name*
-    * File name: scat(*Chance of Switching Colors*)\_*Seed*_*Original Difficulty Name*.osu
+    * File name: scat(*Chance of Switching Columns*)\_*Seed*_*Original Difficulty Name*.osu
 
 ## TODO
 
-* Borrow some elements from Malody-to-osu
-  * Auto-update
+* Borrow some elements from Malody2osu
+  * Auto-update - will release .exe of Rand(osu!) once this is complete
   * Crashlog
