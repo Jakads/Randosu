@@ -12,7 +12,7 @@ from tqdm import tqdm
 from functions import intro, crash, choose, exit
 
 
-version = '0.1.0'
+version = '0.0.0'
 date = '2019-11-08'
 
 # Change window title
@@ -66,7 +66,7 @@ try:
 
             # Target .exe
             # stream=True to show progress with tqdm
-            exe = requests.get('https://github.comm/jakads/Randosu/raw/master/randosu.exe', stream=True)
+            exe = requests.get('https://github.com/jakads/Randosu/raw/master/Randosu.exe', stream=True)
             exe.raise_for_status()
 
             total = int(exe.headers.get('content-length'))
