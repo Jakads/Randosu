@@ -12,7 +12,7 @@ from tqdm import tqdm
 from functions import intro, crash, choose, exit
 
 
-version = '0.0.0'
+version = '0.1.0'
 date = '2019-11-08'
 
 # Change window title
