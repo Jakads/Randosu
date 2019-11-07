@@ -140,7 +140,6 @@ def randosu(path, content):
                 for lo in Occupied:
                     LastOccupied[k] = lo
                     TotalOccupied[k] = lo
-                    print(lo, end='|')
                     k += 1
     
         # If current ms > endms, Unoccupy the column
@@ -166,7 +165,6 @@ def randosu(path, content):
                         for j in TotalOccupied:
                             if not j:
                                 Impossible = False
-                        print(LastOccupied[randcol])
                         if not LastOccupied[randcol] or Impossible:
                             break
                     else:
@@ -198,11 +196,6 @@ def randosu(path, content):
         # Occupy the column
         Occupied[randcol] = True
         TotalOccupied[randcol] = True
-    
-        print(i, n['ms'],end='|')
-        for k in Occupied:
-            print('0' if k else ' ',end='|')
-        print('')
     
         
     with open(filename,'w',encoding='utf-8') as osu:
