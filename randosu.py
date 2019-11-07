@@ -27,8 +27,8 @@ if IsEXE:
     os.chdir(os.path.dirname(sys.executable))
 
 print(f'Rand(osu!) v{version}')
-print(date + '\n')
-print(intro())
+print(date)
+print(intro() + '\n')
 
 ### UPDATING ###
 # Add ':' to disallow user to view this message by dragging files
@@ -44,7 +44,7 @@ if len(sys.argv) > 1 and sys.argv[1] == '--:update':
     print(f'Successfully updated to v{version}!')
     print('Would you like to check out the changelog? (Y/N)\n')
     if choose():
-        webbrowser.open('https://github.com/jakads/Randosu#changelog')
+        webbrowser.open('https://github.com/jakads/Randosu/wiki/Changelog')
     
     # Deleting second element twice actually deletes second and third
     del sys.argv[1], sys.argv[1]
@@ -113,7 +113,7 @@ try:
                 sys.exit()
 
 except Exception as e:
-    print(f'Connection to GitHub failed. ({e})\n')
+    print(f'Connection to GitHub failed: {e}\n')
 
 if len(sys.argv) == 1:
     exit('Open an .osu file with this program (drag the file in) to randomize!')
