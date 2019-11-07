@@ -1,9 +1,9 @@
 import os
 import sys
-from msvcrt import getch
 from random import seed, randint, uniform
 from time import time
 from pathvalidate import sanitize_filename
+from msvcrt import getch
 
 def randosu(path, content):
     # Dictionary List for notes

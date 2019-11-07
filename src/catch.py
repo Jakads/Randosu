@@ -4,6 +4,7 @@ from msvcrt import getch
 from random import seed, randint, uniform
 from time import time
 from pathvalidate import sanitize_filename
+from functions import choose
 
 def randosu(path, content):
     # Dictionary List for notes
@@ -41,11 +42,7 @@ def randosu(path, content):
     seed(randseed)
     
     print('True Random? (Y/N)')
-    while True:
-        answer = getch().decode()
-        if answer in 'yYnN':
-            break
-    TrueRandom = True if answer in 'yY' else False
+    TrueRandom = True if choose() else False
     
     if not TrueRandom:
         while True:

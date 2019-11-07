@@ -4,6 +4,7 @@ from msvcrt import getch
 from random import seed, randint, uniform
 from time import time
 from pathvalidate import sanitize_filename
+from functions import choose
 
 def randosu(path, content):
     # CS = Keys
@@ -72,7 +73,7 @@ def randosu(path, content):
     # Random Seed input
     print('read success')
     randseed = input('seed(optional): ')
-    
+
     # If no seed is given, use current timestamp as the seed
     if randseed == '':
         randseed = int(time())
@@ -80,11 +81,7 @@ def randosu(path, content):
     
     # Scatter
     print('Scatter? (minimum jacks) (Y/N)')
-    while True:
-        answer = getch().decode()
-        if answer in 'yYnN':
-            break
-    Scatter = True if answer in 'yY' else False
+    Scatter = True if choose() else False
     
     # Chance of switching columns
     while True:
