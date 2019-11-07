@@ -21,9 +21,9 @@ Place notes randomly on the screen but on the beat, and then run this program! :
 
 ### **Seed**
 
-*Default: None*\
+*Default: Current Timestamp*\
 Seed is used to initialize a random number generator. That means the same seed will create the same .osu file if used with the same arguments.\
-If left blank, Rand(osu!) will generate with a random seed. You will not be able to regenerate the result.
+If left blank, Rand(osu!) will use the current timestamp (current time in seconds counting from 1970-01-01 00:00:00) as the seed.
 
 ### osu!standard & osu!catch
 
@@ -69,28 +69,6 @@ If left blank, Rand(osu!) will generate with a random seed. You will not be able
 ## Result File Names / Difficulty Names
 
 Randomized .osu files will be created right where your original .osu file is. Here's what the names of the generated files mean.
-
-### If the seed is not given
-
-* **osu!standard & osu!catch**
-  * True Random Off
-    * Difficulty name: Randomized(*Min Scale Factor*~*Max Scale Factor*, Red:*Chance of Red Anchors*)\_*Original Difficulty Name*\_*Timestamp*
-    * File name: rand(*Min Scale Factor*~*Max Scale Factor*,*Chance of Red Anchors*)\_*Original Difficulty Name*\_*Timestamp*.osu
-  * True Random On
-    * Difficulty name: TrueRandomized(Red:*Chance of Red Anchors*)\_*Original Difficulty Name*\_*Timestamp*
-    * File name: truerand(*Chance of Red Anchors*)\_*Original Difficulty Name*\_*Timestamp*.osu
-* **osu!taiko**
-  * Difficulty name: Randomized(*Chance of Switching Colors*%)\_*Original Difficulty Name*\_*Timestamp*
-  * File name: rand(*Chance of Switching Colors*)\_*Original Difficulty Name*\_*Timestamp*.osu
-* **osu!mania**
-  * Scatter Off
-    * Difficulty name: Randomized(*Chance of Switching Columns*%)\_*Original Difficulty Name*\_*Timestamp*
-    * File name: rand(*Chance of Switching Colors*)\_*Original Difficulty Name*\_*Timestamp*.osu
-  * Scatter On
-    * Difficulty name: Scattered(*Chance of Switching Columns*%)\_*Original Difficulty Name*\_*Timestamp*
-    * File name: scat(*Chance of Switching Colors*)\_*Original Difficulty Name*\_*Timestamp*.osu
-
-### If the seed is given
 
 * **osu!standard & osu!catch**
   * True Random Off

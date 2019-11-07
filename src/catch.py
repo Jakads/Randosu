@@ -34,8 +34,11 @@ def randosu(path, content):
     # Random Seed input
     print('read success')
     randseed = input('seed(optional): ')
-    if randseed != '':
-        seed(randseed)
+
+    # If no seed is given, use current timestamp as the seed
+    if randseed == '':
+        randseed = int(time())
+    seed(randseed)
     
     print('True Random? (Y/N)')
     while True:
@@ -90,22 +93,9 @@ def randosu(path, content):
     
             rand = f"truerand({red})" if TrueRandom else f"rand({min}~{max},{red})"
             Rand = f"TrueRandomized(Red:{red}%)" if TrueRandom else f"Randomized({min}~{max}x, Red:{red}%)"
-    
-            if randseed == '':
-                content[index] = f'Version:{Rand}_{diffname}_{int(time())}\n'
-                filename = f'{os.path.dirname(path)}\\{rand}_{sanitize_filename(diffname)}_{int(time())}.osu'
-    
-            # Example:
-            # Diffname: Randomized(0.5~2.0, Red:75.0%)_Insane_1572968652
-            # Filename: ~~~.osu => rand(0.5~2.0,75)_~~~_1572968652.osu
-    
-            else:
-                content[index] = f'Version:{Rand}_{diffname} (Seed:{randseed})\n'
-                filename = f'{os.path.dirname(path)}\\{rand}_{randseed}_{sanitize_filename(diffname)}.osu'
-    
-            # Example:
-            # Diffname: TrueRandomized(Red:0%)_Expert (Seed:joe mama)
-            # Filename: ~~~.osu => truerand(0)_joe mama_~~~.osu
+            
+            content[index] = f'Version:{Rand}_{diffname} (Seed:{randseed})\n'
+            filename = f'{os.path.dirname(path)}\\{rand}_{randseed}_{sanitize_filename(diffname)}.osu'
     
     i=0
     randnotes = []

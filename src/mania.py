@@ -72,8 +72,11 @@ def randosu(path, content):
     # Random Seed input
     print('read success')
     randseed = input('seed(optional): ')
-    if randseed != '':
-        seed(randseed)
+    
+    # If no seed is given, use current timestamp as the seed
+    if randseed == '':
+        randseed = int(time())
+    seed(randseed)
     
     # Scatter
     print('Scatter? (minimum jacks) (Y/N)')
@@ -111,22 +114,9 @@ def randosu(path, content):
     
             Rand = "Randomized" if not Scatter else "Scattered"
             rand = "rand" if not Scatter else "scat"
-    
-            if randseed == '':
-                content[content.index(c)] = f'Version:{Rand}({switch}%)_{diffname}_{int(time())}\n'
-                filename = f'{os.path.dirname(path)}\\{rand}({switch})_{sanitize_filename(diffname)}_{int(time())}.osu'
-    
-            # Example:
-            # Diffname: Randomized(100.0%)_Insane_1572968652
-            # Filename: ~~~.osu => rand100.0_~~~_1572968652.osu
-    
-            else:
-                content[content.index(c)] = f'Version:{Rand}({switch}%)_{diffname} (Seed:{randseed})\n'
-                filename = f'{os.path.dirname(path)}\\{rand}({switch})_{randseed}_{sanitize_filename(diffname)}.osu'
-    
-            # Example:
-            # Diffname: Scattered(69.0%)_Expert (Seed:joe mama)
-            # Filename: ~~~.osu => rand69.0_joe mama_~~~.osu
+
+            content[content.index(c)] = f'Version:{Rand}({switch}%)_{diffname} (Seed:{randseed})\n'
+            filename = f'{os.path.dirname(path)}\\{rand}({switch})_{randseed}_{sanitize_filename(diffname)}.osu'
     
     i=0
     
