@@ -79,7 +79,7 @@ def randosu(path, content):
             Rand = f"TrueRandomized(Red:{red}%)" if TrueRandom else f"Randomized({min}~{max}x, Red:{red}%)"
 
             content[index] = f'Version:{Rand}_{diffname} (Seed:{randseed})\n'
-            filename = f'{os.path.dirname(path)}\\{rand}_{randseed}_{sanitize_filename(diffname)}'
+            filename = f'{os.path.dirname(path)}\\{rand}_{randseed}_{sanitize_filename(diffname)}.osu'
     
     i=0
     randnotes = []

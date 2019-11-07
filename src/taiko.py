@@ -65,7 +65,7 @@ def randosu(path, content):
             index = content.index(c)
             
             content[index] = f'Version:Randomized({switch}%)_{diffname} (Seed:{randseed})\n'
-            filename = f'{os.path.dirname(path)}\\rand({switch})_{randseed}_{sanitize_filename(diffname)}'
+            filename = f'{os.path.dirname(path)}\\rand({switch})_{randseed}_{sanitize_filename(diffname)}.osu'
     
     # Randomize position of the notes
     for n in notes:
