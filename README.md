@@ -24,7 +24,5 @@ For details, check out the [wiki](https://github.com/jakads/Randosu/wiki)
 - More randomization options
 - Friendlier UI using TKinter
 - Auto-select .osu file to randomize using osu client (something like osu!StreamCompanion's Now Playing feature)
-- Chances of switching -> Proportions of switching
-- Make scatter only avoid 16+th jacks
 - Calculate the end of sliders to prevent sliderends going out of bounds
   * Any help about this is greatly appreciated

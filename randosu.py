@@ -164,7 +164,7 @@ except Exception as e:
     crashlog = f'CrashLog_{datetime.now().strftime("%Y%m%d%H%M%S")}.log'
     with open(crashlog,mode='w',encoding='utf-8') as c:
         c.write(crash())
-        c.write(f'Target File: {sys.argv[1]}\n')
+        c.write(f'\n\nTarget File: {sys.argv[1]}\n')
         c.write('If you would like to tell the dev about this issue, please attach the file above with this crash report.\n')
         c.write('DO NOT EDIT ANYTHING WRITTEN HERE.\n\n')
         c.write(traceback.format_exc())

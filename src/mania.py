@@ -144,7 +144,7 @@ def randosu(path, content):
     
     i=0
 
-    f = open('test.log',mode='w',encoding='utf-8')
+    # f = open('test.log',mode='w',encoding='utf-8')
         
     # Int, Boolean List for checking the previous occupation (used for Scatter)
     # Defaults to [False, False, ..., False]
@@ -267,9 +267,9 @@ def randosu(path, content):
 
         i += 1
         
-        f.write(f'{randcol} | {n["ms"]}, {ceil(mpb/4)}, {bestcol}, {goodcol}, {leftcol}\n')
+        # f.write(f'{randcol} | {n["ms"]}, {ceil(mpb/4)}, {bestcol}, {goodcol}, {leftcol}\n')
     
-    f.close()
+    # f.close()
     with open(filename,'w',encoding='utf-8') as osu:
         col = [int(512*(2*column+1)/(2*keys)) for column in range(keys)]
 

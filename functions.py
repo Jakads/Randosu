@@ -16,7 +16,7 @@ def intro():
         'hi',
         'yes',
         'epic',
-        'The Ultmiate Map Radnomizer for all modes in osu!'
+        'More visual layouts coming soon:tm:',
     ]
     introweight = [30] + [10] + [1] * (len(introlist) - 2)
     return choices(introlist, introweight)[0]
@@ -34,7 +34,8 @@ def crash():
         'I hate myself.',
         'When you mix up the pattern too intensely',
         'damn',
-        'h'
+        'h',
+        'the fuck'
     ]
     return choices(crashlist)[0]
 
