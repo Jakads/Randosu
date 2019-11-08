@@ -12,7 +12,7 @@ from tqdm import tqdm
 from functions import intro, crash, choose, exit
 
 
-version = '0.1.0'
+version = '0.1.1'
 date = '2019-11-08'
 
 # Change window title
@@ -25,6 +25,8 @@ IsEXE = getattr(sys, 'frozen', False)
 # If py, this is unnecessary as current dir is py's dir by default
 if IsEXE:
     os.chdir(os.path.dirname(sys.executable))
+
+currentdir = os.getcwd()
 
 print(f'Rand(osu!) v{version}')
 print(date)
@@ -85,32 +87,32 @@ try:
             progress.close()
 
             # Writing temporary batch file
-            with tempfile.NamedTemporaryFile('w', delete=False) as bat:
+            with tempfile.NamedTemporaryFile('w', encoding='utf-8', delete=False) as bat:
                 batpath = bat.name
                 bat.write('\n'.join([
                     '@echo off',
-                    'Applying update . . .'
 
-                    # Waiting for potentially unfinished download
-                    'timeout /t 1 /nobreak >nul',
+                    # In case of unicode filenames you need this
+                    # Thank you google
+                    '@chcp 65001 1> NUL 2> NUL',
 
                     # Remove original exe
                     # If ran from script, this will have no effect
-                    f'del "{filename}"',
+                    f'del "{currentdir}\\{filename}"',
 
                     # Rename the downloaded file then move
-                    f'rename "{tmppath}" "{filename}"'
-                    f'move /y "{os.path.dirname(tmppath)}\\{filename}" "{filename}"',
+                    f'rename "{tmppath}" "{filename}"',
+                    f'move /y "{os.path.dirname(tmppath)}\\{filename}" "{currentdir}\\{filename}"',
 
                     'cls',
                     # Executing the updated exe
-                    f'"{filename}" --:update {batpath}.bat {sys.argv[1] if len(sys.argv)>1 else ""}'
+                    f'"{currentdir}\\{filename}" --:update {batpath}.bat {sys.argv[1] if len(sys.argv)>1 else ""}'
                 ]))
                 
-                # Rename tmp file to make it have .bat extension
-                os.rename(batpath, batpath + '.bat')
-
-                sys.exit()
+            # Rename tmp file to make it have .bat extension
+            os.rename(batpath, batpath + '.bat')
+            os.startfile(batpath + '.bat')
+            sys.exit()
 
 except Exception as e:
     print(f'Connection to GitHub failed: {e}\n')
