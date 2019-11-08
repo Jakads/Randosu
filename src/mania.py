@@ -1,7 +1,7 @@
 import os
 import sys
 from msvcrt import getch
-from random import seed, randint, uniform
+from random import seed, randint, uniform, shuffle
 from time import time
 from pathvalidate import sanitize_filename
 from functions import choose, inputnum
@@ -87,9 +87,9 @@ def randosu(path, content):
     print('Enable Scatter? (minimum jacks) (Y/N)')
     Scatter = True if choose() else False
     
-    # Chance of switching columns
+    # Proportion of switching columns
     while True:
-        switch = inputnum('chance of switching columns(%, default 100): ', 100)
+        switch = inputnum('Proportion of Switching Columns(%, default 100): ', 100)
         if switch > 100:
             switch = 100
         if switch <= 0:
@@ -99,6 +99,14 @@ def randosu(path, content):
             print("what's the point?")
         else:
             break
+
+    switchnum = int(len(notes) * (switch / 100))
+    # Generate switch bool list according to the proportion
+    Switch = [False] * len(notes)
+    switchindex = list(range(len(notes)))
+    shuffle(switchindex)
+    for i in switchindex[:switchnum]:
+        Switch[i] = True
     
     # Change difficulty & output file name
     for c in content:
@@ -132,11 +140,9 @@ def randosu(path, content):
             if n['ms'] > o['endms']:
                 occtime.remove(o)
                 Occupied[o['col']] = False
-        i+=1
         
-    
         # If no switch, (and if scatter, if not lastoccupied,) keep the column
-        if (uniform(0, 100) > switch) and not Occupied[n['col']] and (not Scatter or not LastOccupied[n['col']]):
+        if not Switch[i] and not Occupied[n['col']] and (not Scatter or not LastOccupied[n['col']]):
             randcol = n['col']
         # If switch, Get an unoccupied column
         else:
@@ -180,6 +186,8 @@ def randosu(path, content):
         # Occupy the column
         Occupied[randcol] = True
         TotalOccupied[randcol] = True
+
+        i += 1
     
         
     with open(filename,'w',encoding='utf-8') as osu:

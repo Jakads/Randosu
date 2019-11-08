@@ -1,6 +1,6 @@
 import os
 import sys
-from random import seed, randint, uniform
+from random import seed, randint, uniform, shuffle
 from time import time
 from pathvalidate import sanitize_filename
 from msvcrt import getch
@@ -49,13 +49,21 @@ def randosu(path, content):
     
     print("Kimagure=20%, Detarame=50%, Abekobe(Mirror)=100%")
     while True:
-        switch = inputnum('Chance of Switching Colors(%, default 50): ', 50)
+        switch = inputnum('Proportion of Switching Colors(%, default 50): ', 50)
         if switch > 100:
             switch = 100
         if switch <= 0:
             print("What's the point?")
         else:
             break
+
+    switchnum = int(len(notes) * (switch / 100))
+    # Generate switch bool list according to the proportion
+    Switch = [False] * len(notes)
+    switchindex = list(range(len(notes)))
+    shuffle(switchindex)
+    for i in switchindex[:switchnum]:
+        Switch[i] = True
     
     # Change difficulty & output file name
     for c in content:
@@ -67,9 +75,11 @@ def randosu(path, content):
             content[index] = f'Version:Randomized({switch}%)_{diffname} (Seed:{randseed})\n'
             filename = f'{os.path.dirname(path)}\\rand({switch})_{randseed}_{sanitize_filename(diffname)}.osu'
     
+    i = 0
+
     # Randomize position of the notes
     for n in notes:
-        if uniform(0, 100) < switch:
+        if Switch[i]:
             # 1: Normal, 2: Whistle, 4: Finish, 8: Clap
             hitsound = format(int(n["type"]) + 16, 'b')
             Kat = int(hitsound[1]) or int(hitsound[3])
@@ -85,6 +95,8 @@ def randosu(path, content):
                 #K -> D
                 11: 4
             }.get(Kat * 10 + Big)
+        
+        i += 1
     
     with open(filename,'w',encoding='utf-8') as osu:
         for c in content[:objindex+1]:
