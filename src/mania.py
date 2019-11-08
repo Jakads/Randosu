@@ -27,6 +27,10 @@ def randosu(path, content):
 
         # Parse BPMs from the next row of [TimingPoints] to [HitObjects]
         for c in content[bpmindex+1:objindex]:
+            # Ignore comments and blanks
+            if c.startswith('//') or c == '\n':
+                continue
+
             # BPM Points: ms,60000/BPM,[],[],[],[],1,[]
             # 60000/BPM = ms per beat
             content_split = c.split(',')
@@ -39,6 +43,10 @@ def randosu(path, content):
 
         # Parse notes from the next row of [HitObjects] to EOF
         for c in content[objindex+1:]:
+            # Ignore comments and blanks
+            if c.startswith('//') or c == '\n':
+                continue
+            
             # Regular Note: col,192,ms,1,0,0:0:0:0:
             # Long Note:    col,192,startms,128,0,endms:0:0:0:0:
             content_split = c.split(',')

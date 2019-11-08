@@ -22,6 +22,10 @@ def randosu(path, content):
         
         # Parse notes from the next row of [HitObjects] to EOF
         for c in content[objindex+1:]:
+            # Ignore comments and blanks
+            if c.startswith('//') or c == '\n':
+                continue
+            
             # Syntax: x, y, extra
             content_split = c.split(',')
             note_x = int(content_split[0])
