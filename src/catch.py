@@ -4,7 +4,7 @@ from msvcrt import getch
 from random import seed, randint, uniform
 from time import time
 from pathvalidate import sanitize_filename
-from functions import choose, inputnum
+from functions import choose, inputnum, exit
 
 def randosu(path, content):
     try:

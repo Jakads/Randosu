@@ -12,7 +12,7 @@ def intro():
         'Maps usually become so underrated with this',
         '?',
         'New Mapping Meta 2020',
-        'tbh some results actually look good enough to be ranked ngl'
+        'tbh some results actually look good enough to be ranked ngl',
         'hi',
         'yes',
         'epic',
