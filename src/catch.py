@@ -105,7 +105,7 @@ def randosu(path, content):
     
             # If factor is too high, corner the object, but only if it's truly impossible
             prevx = randnotes[i-1]['x']
-            if abs(diffx) * minsf > max([prevx, 512-prevx]):
+            if abs(diffx) * minsf > max(prevx, 512-prevx):
                 if randx < 0:
                     randx = 0
                 if randx > 512:

@@ -27,13 +27,14 @@ def randosu(path, content):
 
         # Parse BPMs from the next row of [TimingPoints] to [HitObjects]
         for c in content[bpmindex+1:objindex]:
-            # Ignore comments and blanks
-            if c.startswith('//') or c == '\n':
-                continue
-
             # BPM Points: ms,60000/BPM,[],[],[],[],1,[]
             # 60000/BPM = ms per beat
             content_split = c.split(',')
+            
+            # Ignore comments and others
+            if c.startswith('//') or len(content_split) != 8:
+                continue
+
             if content_split[6] == '1':
                 bpms.append({
                     # {ms, mpb}
