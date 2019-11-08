@@ -12,8 +12,8 @@ from tqdm import tqdm
 from functions import intro, crash, choose, exit
 
 
-version = '0.1.1'
-date = '2019-11-08'
+version = '0.2.0'
+date = '2019-11-09'
 
 # Change window title
 ctypes.windll.kernel32.SetConsoleTitleW(f'Rand(osu!) v{version}')
