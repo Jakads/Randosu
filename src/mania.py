@@ -1,10 +1,11 @@
 import os
 import sys
 from msvcrt import getch
-from random import seed, randint, uniform, shuffle
+from random import seed, randint, uniform, shuffle, choice
 from time import time
 from pathvalidate import sanitize_filename
 from functions import choose, inputnum, exit
+from math import ceil
 
 def randosu(path, content):
     try:
@@ -14,21 +15,42 @@ def randosu(path, content):
         # Generate the x-coordinates of each column
         colrange = [512*column/keys for column in range(keys+1)]
         
+        # Dictionary List for BPMs
+        bpms = []
+
         # Dictionary List for notes
         notes = []
+
+        bpmindex = content.index('[TimingPoints]\n')
         
         objindex = content.index('[HitObjects]\n')
-        
+
+        # Parse BPMs from the next row of [TimingPoints] to [HitObjects]
+        for c in content[bpmindex+1:objindex]:
+            # BPM Points: ms,60000/BPM,[],[],[],[],1,[]
+            # 60000/BPM = ms per beat
+            content_split = c.split(',')
+            if content_split[6] == '1':
+                bpms.append({
+                    # {ms, mpb}
+                    'ms': content_split[0],
+                    'mpb': float(content_split[1])
+                })
+
         # Parse notes from the next row of [HitObjects] to EOF
         for c in content[objindex+1:]:
             # Regular Note: col,192,ms,1,0,0:0:0:0:
             # Long Note:    col,192,startms,128,0,endms:0:0:0:0:
             content_split = c.split(',')
             note_colvalue = int(content_split[0])
+            print(note_colvalue, end=' ')
             for i in range(keys):
-                if colrange[i] < note_colvalue < colrange[i+1]:
+                if colrange[i] < note_colvalue <= colrange[i+1]:
                     note_col = i
+                    print(note_col)
                     break
+            if note_colvalue == 0:
+                note_col = 0
             note_ms = int(content_split[2])
             note_LN = True if int(content_split[3])/128 >= 1 else False
             # 132 is LN too, for example (128(LN) + 4(New Combo))
@@ -66,17 +88,24 @@ def randosu(path, content):
     # Int, Boolean List for checking the previous occupation (used for Scatter)
     # Defaults to [False, False, ..., False]
     LastOccupied = keys * [False]
+
+    # Int, Boolean List for checking the previous occupation for the last 16th beat (used for Scatter)
+    # Defaults to [False, False, ..., False]
+    Last16Occupied = keys * [False]
     
     # Tracking LastOccupied's ms
     lastms = 0
     
     # Checking if not placing jacks is impossible
-    TotalOccupied = keys * [False]
     Impossible = False
     
     # Dictionary List tracking the end time of occupation
     # {col, endms}
     occtime = []
+
+    # Dictionary List tracking the end time of occupation for the last 16th beat
+    # {col, endms}
+    occ16time = []
     
     # Random Seed input
     print('Import success.')
@@ -128,6 +157,16 @@ def randosu(path, content):
     
     # Randomize position of the notes
     for n in notes:
+        # Get current ms per beat
+        mpb = -1
+
+        for b in bpms:
+            if n['ms'] < b['ms']:
+                mpb = bpms[bpms.index(b)-1]['mpb']
+        
+        if mpb == -1:
+            mpb = bpms[-1]['mpb']
+            
         # Copy Occupied if Scatter and it's the next notes
         if (i != 0) and Scatter:
             if n['ms'] > lastms:
@@ -135,7 +174,6 @@ def randosu(path, content):
                 k = 0
                 for lo in Occupied:
                     LastOccupied[k] = lo
-                    TotalOccupied[k] = lo
                     k += 1
     
         # If current ms > endms, Unoccupy the column
@@ -144,9 +182,14 @@ def randosu(path, content):
             if n['ms'] > o['endms']:
                 occtime.remove(o)
                 Occupied[o['col']] = False
+
+        for o in occ16time[:]:
+            if n['ms'] > o['endms']:
+                occ16time.remove(o)
+                Last16Occupied[o['col']] = False
         
-        # If no switch, (and if scatter, if not lastoccupied,) keep the column
-        if not Switch[i] and not Occupied[n['col']] and (not Scatter or not LastOccupied[n['col']]):
+        # If no switch, (and if scatter, if not last16occupied,) keep the column
+        if not Switch[i] and not Occupied[n['col']] and (not Scatter or not Last16Occupied[n['col']]):
             randcol = n['col']
         # If switch, Get an unoccupied column
         else:
@@ -154,12 +197,37 @@ def randosu(path, content):
                 randcol = randint(0, keys-1)
                 if not Occupied[randcol]:
                     if Scatter:
-                        # Checking if not placing jacks is impossible
+                        if not Last16Occupied[randcol]:
+                            break
+
+                        # Checking if ignoring 16th jack is impossible
+                        # Keep Impossible True if all Occupied and Last16Occupied is True
                         Impossible = True
-                        for j in TotalOccupied:
-                            if not j:
+                        for j in range(keys):
+                            if not Occupied[j] or not Last16Occupied[j]:
                                 Impossible = False
-                        if not LastOccupied[randcol] or Impossible:
+
+                        # If it is not impossible, just try again
+                        # If impossible however, prioritize not LastOccupied column
+                        if Impossible:
+                            # Check if every column is LastOccupied (e.g. Chords with all keys)
+                            # leftcol: not Occupied, possible columns
+                            # goodcol: not Occupied AND not LastOccupied, desired columns
+                            leftcol = []
+                            goodcol = []
+                            for j in range(keys):
+                                if not Occupied[j]:
+                                    leftcol.append(j)
+                                    if not LastOccupied[j]:
+                                        goodcol.append(j)
+                                        Impossible = False
+
+                            if not Impossible:
+                                randcol = choice(goodcol)
+                            
+                            else:
+                                randcol = choice(leftcol)
+                            
                             break
                     else:
                         break
@@ -171,9 +239,14 @@ def randosu(path, content):
                 'ms': n['ms'],
                 'endms': n['endms']
             })
-            occtime.append({    
+            occtime.append({
                 'col': randcol,
                 'endms': n['endms']
+            })
+            occ16time.append({
+                'col': randcol,
+                # Getting the ceil value just in case
+                'endms': n['endms'] + ceil(mpb / 4)
             })
         
         # if regular note:
@@ -186,10 +259,15 @@ def randosu(path, content):
                 'col': randcol,
                 'endms': n['ms']
             })
+            occ16time.append({
+                'col': randcol,
+                # Getting the ceil value just in case
+                'endms': n['ms'] + ceil(mpb / 4)
+            })
             
         # Occupy the column
         Occupied[randcol] = True
-        TotalOccupied[randcol] = True
+        Last16Occupied[randcol] = True
 
         i += 1
     
