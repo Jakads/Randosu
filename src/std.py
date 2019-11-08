@@ -1,7 +1,7 @@
 import os
 import sys
 from msvcrt import getch
-from random import seed, randint, uniform
+from random import seed, randint, uniform, choice
 from time import time
 from math import sin, cos, pi
 from pathvalidate import sanitize_filename
@@ -11,15 +11,36 @@ def randosu(path, content):
     try:
         # Dictionary List for notes
         notes = []
+
+        # Dictionary List for BPMs
+        bpms = []
         
         # Change Stack Leniency to 0
         for c in content:
             if c.startswith('StackLeniency:'):
                 content[content.index(c)] = 'StackLeniency:0\n'
                 break
+
+        bpmindex = content.index('[TimingPoints]\n')
         
         objindex = content.index('[HitObjects]\n')
-        
+
+        # Parse BPMs from the next row of [TimingPoints] to [HitObjects]
+        for c in content[bpmindex+1:objindex]:
+            # Ignore comments and blanks
+            if c.startswith('//') or c == '\n':
+                continue
+
+            # BPM Points: ms,60000/BPM,[],[],[],[],1,[]
+            # 60000/BPM = ms per beat
+            content_split = c.split(',')
+            if content_split[6] == '1':
+                bpms.append({
+                    # {ms, mpb}
+                    'ms': float(content_split[0]),
+                    'mpb': float(content_split[1])
+                })
+        print('h')
         # Parse notes from the next row of [HitObjects] to EOF
         for c in content[objindex+1:]:
             # Ignore comments and blanks
@@ -97,15 +118,28 @@ def randosu(path, content):
                 randx = randint(0, 512)
                 randy = randint(0, 384)
                 break
+
+            # Get current ms per beat
+            mpb = -1
+
+            for b in bpms:
+                if n['ms'] < b['ms']:
+                    mpb = bpms[bpms.index(b)-1]['mpb']
+                    break
+        
+            if mpb == -1:
+                mpb = bpms[-1]['mpb']
     
             # Add 0~10 for chaos
             diffx = n['x'] - notes[i-1]['x'] + uniform(0, 10)
             diffy = n['y'] - notes[i-1]['y'] + uniform(0, 10)
+            diffms = n['ms'] - notes[i-1]['ms']
 
             d = lambda x, y: (x ** 2 + y ** 2) ** 0.5
             distance = d(diffx, diffy)
     
-            rad += 2 * pi * uniform(-1, 1) ** 5
+            # rad is closer to pi if diffms is bigger, peak = 1/2 snap
+            rad += pi * uniform(0, min(1, (2 * diffms / mpb) ** 1.5)) * choice([1, -1])
             factor = uniform(minsf, maxsf)
     
             randx = randnotes[i-1]['x'] + int(distance * factor * cos(rad))
@@ -114,7 +148,7 @@ def randosu(path, content):
             # If factor is too high, corner the object, but only if it's truly impossible
             prevx = randnotes[i-1]['x']
             prevy = randnotes[i-1]['y']
-            if distance * minsf > max([d(prevx, prevy), d(512-prevx, prevy), d(prevx, 384-prevy), d(512-prevx, 384-prevy)]):
+            if distance * minsf > max(d(prevx, prevy), d(512-prevx, prevy), d(prevx, 384-prevy), d(512-prevx, 384-prevy)):
                 if randx < 0:
                     randx = 0
                 if randx > 512:
