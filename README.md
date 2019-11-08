@@ -7,14 +7,14 @@ Tested only on Windows, normal functionality on the other OS's not guaranteed.
 
 ## How to use
 
-다음처럼 .osu 파일을 randosu.py / randosu.exe에 드래그한 다음 프로그램의 지시를 따라주세요.
+다음처럼 .osu 파일을 randosu.py / randosu.exe에 드래그한 다음 프로그램의 지시를 따라주세요.  
 Drag an .osu file into randosu.py / randosu.exe and follow the instructions.  
 Like this:  
 ![Yeet](https://cdn.discordapp.com/attachments/163634681500270593/642064497707581461/unknown.png)
 
 ## Wiki
 
-자세한 내용은 [위키](https://github.com/jakads/Randosu/wiki/Home_%ED%95%9C%EA%B5%AD%EC%96%B4)를 참고해주세요.
+자세한 내용은 [위키](https://github.com/jakads/Randosu/wiki/Home_%ED%95%9C%EA%B5%AD%EC%96%B4)를 참고해주세요.  
 For details, check out the [wiki](https://github.com/jakads/Randosu/wiki)
 
 ## TODO
