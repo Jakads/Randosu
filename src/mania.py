@@ -12,7 +12,7 @@ def randosu(path, content):
         keys = [int(i.split(':')[1]) for i in content if i.split(':')[0] == 'CircleSize'][0]
         
         # Generate the x-coordinates of each column
-        col = [int(512*(2*column+1)/(2*keys)) for column in range(keys)]
+        colrange = [512*column/keys for column in range(keys+1)]
         
         # Dictionary List for notes
         notes = []
@@ -24,7 +24,11 @@ def randosu(path, content):
             # Regular Note: col,192,ms,1,0,0:0:0:0:
             # Long Note:    col,192,startms,128,0,endms:0:0:0:0:
             content_split = c.split(',')
-            note_col = col.index(int(content_split[0]))
+            note_colvalue = int(content_split[0])
+            for i in range(keys):
+                if colrange[i] < note_colvalue < colrange[i+1]:
+                    note_col = i
+                    break
             note_ms = int(content_split[2])
             note_LN = True if int(content_split[3])/128 >= 1 else False
             # 132 is LN too, for example (128(LN) + 4(New Combo))
@@ -191,6 +195,8 @@ def randosu(path, content):
     
         
     with open(filename,'w',encoding='utf-8') as osu:
+        col = [int(512*(2*column+1)/(2*keys)) for column in range(keys)]
+
         for c in content[:objindex+1]:
             osu.write(c)
     
