@@ -56,14 +56,14 @@ def randosu(path, content):
     TrueRandom = True if choose() else False
     
     if not TrueRandom:
-        min = inputnum('Min Scale Factor(Default: 0.8): ', 0.8)
-        max = inputnum('Max Scale Factor(Default: 1.5): ', 1.5)
+        minsf = inputnum('Min Scale Factor(Default: 0.8): ', 0.8)
+        maxsf = inputnum('Max Scale Factor(Default: 1.5): ', 1.5)
     
         # I bet someone would try this so
-        if min > max:
-            tmp = min
-            min = max
-            max = tmp
+        if minsf > maxsf:
+            tmp = minsf
+            minsf = maxsf
+            maxsf = tmp
     
     red = inputnum('Chance of Red Anchors(%, default 25): ', 25)
     
@@ -79,8 +79,8 @@ def randosu(path, content):
             diffname = c.split(':', 1)[1][:-1]
             index = content.index(c)
     
-            rand = f"truerand({red})" if TrueRandom else f"rand({min}~{max},{red})"
-            Rand = f"TrueRandomized(Red:{red}%)" if TrueRandom else f"Randomized({min}~{max}x, Red:{red}%)"
+            rand = f"truerand({red})" if TrueRandom else f"rand({minsf}~{maxsf},{red})"
+            Rand = f"TrueRandomized(Red:{red}%)" if TrueRandom else f"Randomized({minsf}~{maxsf}x, Red:{red}%)"
 
             content[index] = f'Version:{Rand}_{diffname} (Seed:{randseed})\n'
             filename = f'{os.path.dirname(path)}\\{rand}_{randseed}_{sanitize_filename(diffname)}.osu'
@@ -102,16 +102,19 @@ def randosu(path, content):
             diffx = n['x'] - notes[i-1]['x'] + uniform(0, 10)
             diffy = n['y'] - notes[i-1]['y'] + uniform(0, 10)
 
-            distance = (diffx ** 2 + diffy ** 2) ** 0.5
+            d = lambda x, y: (x ** 2 + y ** 2) ** 0.5
+            distance = d(diffx, diffy)
     
-            rad += 2 * pi * uniform(-1, 1) ** 3
-            factor = uniform(min, max)
+            rad += 2 * pi * uniform(-1, 1) ** 5
+            factor = uniform(minsf, maxsf)
     
             randx = randnotes[i-1]['x'] + int(distance * factor * cos(rad))
             randy = randnotes[i-1]['y'] + int(distance * factor * sin(rad))
     
-            # If factor is too high, corner the object
-            if int(distance * factor) > 640:
+            # If factor is too high, corner the object, but only if it's truly impossible
+            prevx = randnotes[i-1]['x']
+            prevy = randnotes[i-1]['y']
+            if distance * minsf > max([d(prevx, prevy), d(512-prevx, prevy), d(prevx, 384-prevy), d(512-prevx, 384-prevy)]):
                 if randx < 0:
                     randx = 0
                 if randx > 512:

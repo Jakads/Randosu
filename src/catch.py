@@ -53,14 +53,14 @@ def randosu(path, content):
     TrueRandom = True if choose() else False
     
     if not TrueRandom:
-        min = inputnum('Min Scale Factor(Default: 0.8): ', 0.8)
-        max = inputnum('Max Scale Factor(Default: 1.5): ', 1.5)
+        minsf = inputnum('Min Scale Factor(Default: 0.8): ', 0.8)
+        maxsf = inputnum('Max Scale Factor(Default: 1.5): ', 1.5)
     
         # I bet someone would try this so
-        if min > max:
-            tmp = min
-            min = max
-            max = tmp
+        if minsf > maxsf:
+            tmp = minsf
+            minsf = maxsf
+            maxsf = tmp
     
     red = inputnum('Chance of Red Anchors(%, default 25): ', 25)
     
@@ -76,8 +76,8 @@ def randosu(path, content):
             diffname = c.split(':', 1)[1][:-1]
             index = content.index(c)
     
-            rand = f"truerand({red})" if TrueRandom else f"rand({min}~{max},{red})"
-            Rand = f"TrueRandomized(Red:{red}%)" if TrueRandom else f"Randomized({min}~{max}x, Red:{red}%)"
+            rand = f"truerand({red})" if TrueRandom else f"rand({minsf}~{maxsf},{red})"
+            Rand = f"TrueRandomized(Red:{red}%)" if TrueRandom else f"Randomized({minsf}~{maxsf}x, Red:{red}%)"
             
             content[index] = f'Version:{Rand}_{diffname} (Seed:{randseed})\n'
             filename = f'{os.path.dirname(path)}\\{rand}_{randseed}_{sanitize_filename(diffname)}.osu'
@@ -96,15 +96,16 @@ def randosu(path, content):
             # Add 0~10 for chaos
             diffx = n['x'] - notes[i-1]['x'] + uniform(0, 10)
     
-            factor = uniform(min, max)
+            factor = uniform(minsf, maxsf)
     
             if randint(0, 1):
                 randx = randnotes[i-1]['x'] + int(diffx * factor)
             else:
                 randx = randnotes[i-1]['x'] - int(diffx * factor)
     
-            # If factor is too high, corner the object
-            if abs(int(diffx * factor)) > 1200:
+            # If factor is too high, corner the object, but only if it's truly impossible
+            prevx = randnotes[i-1]['x']
+            if abs(diffx) * minsf > max([prevx, 512-prevx]):
                 if randx < 0:
                     randx = 0
                 if randx > 512:
