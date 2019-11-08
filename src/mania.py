@@ -37,7 +37,7 @@ def randosu(path, content):
             if content_split[6] == '1':
                 bpms.append({
                     # {ms, mpb}
-                    'ms': content_split[0],
+                    'ms': float(content_split[0]),
                     'mpb': float(content_split[1])
                 })
 
@@ -46,16 +46,14 @@ def randosu(path, content):
             # Ignore comments and blanks
             if c.startswith('//') or c == '\n':
                 continue
-            
+
             # Regular Note: col,192,ms,1,0,0:0:0:0:
             # Long Note:    col,192,startms,128,0,endms:0:0:0:0:
             content_split = c.split(',')
             note_colvalue = int(content_split[0])
-            print(note_colvalue, end=' ')
             for i in range(keys):
                 if colrange[i] < note_colvalue <= colrange[i+1]:
                     note_col = i
-                    print(note_col)
                     break
             if note_colvalue == 0:
                 note_col = 0
@@ -88,24 +86,6 @@ def randosu(path, content):
         exit('Import failed. The .osu file is invalid.')
     
     randnotes = []
-    
-    # Boolean List for checking if the column is occupied or not
-    # Defaults to [False, False, ..., False]
-    Occupied = keys * [False]
-    
-    # Int, Boolean List for checking the previous occupation (used for Scatter)
-    # Defaults to [False, False, ..., False]
-    LastOccupied = keys * [False]
-
-    # Int, Boolean List for checking the previous occupation for the last 16th beat (used for Scatter)
-    # Defaults to [False, False, ..., False]
-    Last16Occupied = keys * [False]
-    
-    # Tracking LastOccupied's ms
-    lastms = 0
-    
-    # Checking if not placing jacks is impossible
-    Impossible = False
     
     # Dictionary List tracking the end time of occupation
     # {col, endms}
@@ -162,83 +142,94 @@ def randosu(path, content):
             filename = f'{os.path.dirname(path)}\\{rand}({switch})_{randseed}_{sanitize_filename(diffname)}.osu'
     
     i=0
+
+    f = open('test.log',mode='w',encoding='utf-8')
+        
+    # Int, Boolean List for checking the previous occupation (used for Scatter)
+    # Defaults to [False, False, ..., False]
+    LastOccupied = keys * [False]
+        
+    # Tracking LastOccupied's ms
+    lastms = 0
     
     # Randomize position of the notes
     for n in notes:
+        # Boolean List for checking if the column is occupied or not
+        # Defaults to [False, False, ..., False]
+        Occupied = keys * [False]
+    
+        # Int, Boolean List for checking the previous occupation for the last 16th beat (used for Scatter)
+        # Defaults to [False, False, ..., False]
+        Last16Occupied = keys * [False]
+
         # Get current ms per beat
         mpb = -1
 
         for b in bpms:
             if n['ms'] < b['ms']:
                 mpb = bpms[bpms.index(b)-1]['mpb']
+                break
         
         if mpb == -1:
             mpb = bpms[-1]['mpb']
             
         # Copy Occupied if Scatter and it's the next notes
         if (i != 0) and Scatter:
-            if n['ms'] > lastms:
+            # +5 just in case of unsnapped notes
+            if n['ms'] > lastms + 5:
                 lastms = n['ms']
-                k = 0
-                for lo in Occupied:
-                    LastOccupied[k] = lo
-                    k += 1
+                LastOccupied = keys * [False]
+                for o in occtime[:]:
+                    LastOccupied[o['col']] = True
     
         # If current ms > endms, Unoccupy the column
         # Doing this the first because the program gets stuck often
+        # Also occupy the column meanwhile
         for o in occtime[:]:
             if n['ms'] > o['endms']:
                 occtime.remove(o)
-                Occupied[o['col']] = False
+        for o in occtime[:]:
+            Occupied[o['col']] = True
 
         for o in occ16time[:]:
             if n['ms'] > o['endms']:
                 occ16time.remove(o)
-                Last16Occupied[o['col']] = False
+        for o in occ16time[:]:
+            Last16Occupied[o['col']] = True
         
         # If no switch, (and if scatter, if not last16occupied,) keep the column
         if not Switch[i] and not Occupied[n['col']] and (not Scatter or not Last16Occupied[n['col']]):
             randcol = n['col']
         # If switch, Get an unoccupied column
         else:
-            while True:
-                randcol = randint(0, keys-1)
-                if not Occupied[randcol]:
-                    if Scatter:
-                        if not Last16Occupied[randcol]:
-                            break
+            # leftcol: not Occupied, possible columns
+            # goodcol: not Occupied AND not LastOccupied, desired columns
+            # bestcol: not Occupied AND not Last16Occupied, most desired columns
+            bestcol = []
+            goodcol = []
+            leftcol = []
 
-                        # Checking if ignoring 16th jack is impossible
-                        # Keep Impossible True if all Occupied and Last16Occupied is True
-                        Impossible = True
-                        for j in range(keys):
-                            if not Occupied[j] or not Last16Occupied[j]:
-                                Impossible = False
+            for j in range(keys):
+                if not Occupied[j]:
+                    leftcol.append(j)
+                    if not Last16Occupied[j]:
+                        bestcol.append(j)
+                    if not LastOccupied[j]:
+                        goodcol.append(j)
 
-                        # If it is not impossible, just try again
-                        # If impossible however, prioritize not LastOccupied column
-                        if Impossible:
-                            # Check if every column is LastOccupied (e.g. Chords with all keys)
-                            # leftcol: not Occupied, possible columns
-                            # goodcol: not Occupied AND not LastOccupied, desired columns
-                            leftcol = []
-                            goodcol = []
-                            for j in range(keys):
-                                if not Occupied[j]:
-                                    leftcol.append(j)
-                                    if not LastOccupied[j]:
-                                        goodcol.append(j)
-                                        Impossible = False
-
-                            if not Impossible:
-                                randcol = choice(goodcol)
-                            
-                            else:
-                                randcol = choice(leftcol)
-                            
-                            break
+            if len(bestcol) > 0:
+                randcol = choice(bestcol)
+            
+            else:
+                if len(goodcol) > 0:
+                    randcol = choice(goodcol)
+                
+                else:
+                    if len(leftcol) > 0:
+                        randcol = choice(leftcol)
+                    
                     else:
-                        break
+                        randcol = randint(0, keys-1)
         
         # if LN:
         if 'endms' in n:
@@ -253,8 +244,8 @@ def randosu(path, content):
             })
             occ16time.append({
                 'col': randcol,
-                # Getting the ceil value just in case
-                'endms': n['endms'] + ceil(mpb / 4)
+                # Getting the ceil value just in case of an unsnapped note
+                'endms': n['ms'] + ceil(mpb / 4)
             })
         
         # if regular note:
@@ -269,17 +260,15 @@ def randosu(path, content):
             })
             occ16time.append({
                 'col': randcol,
-                # Getting the ceil value just in case
+                # Getting the ceil value just in case of an unsnapped note
                 'endms': n['ms'] + ceil(mpb / 4)
             })
-            
-        # Occupy the column
-        Occupied[randcol] = True
-        Last16Occupied[randcol] = True
 
         i += 1
-    
         
+        f.write(f'{randcol} | {n["ms"]}, {ceil(mpb/4)}, {bestcol}, {goodcol}, {leftcol}\n')
+    
+    f.close()
     with open(filename,'w',encoding='utf-8') as osu:
         col = [int(512*(2*column+1)/(2*keys)) for column in range(keys)]
 
