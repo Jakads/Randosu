@@ -218,11 +218,11 @@ def randosu(path, content):
                     if not LastOccupied[j]:
                         goodcol.append(j)
 
-            if len(bestcol) > 0:
+            if len(bestcol) > 0 and Scatter:
                 randcol = choice(bestcol)
             
             else:
-                if len(goodcol) > 0:
+                if len(goodcol) > 0 and Scatter:
                     randcol = choice(goodcol)
                 
                 else:
