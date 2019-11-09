@@ -15,7 +15,8 @@ Like this:
 ## Wiki
 
 자세한 내용은 [위키](https://github.com/jakads/Randosu/wiki/Home_%ED%95%9C%EA%B5%AD%EC%96%B4)를 참고해주세요.  
-For details, check out the [wiki](https://github.com/jakads/Randosu/wiki)
+For details, check out the [wiki](https://github.com/jakads/Randosu/wiki).
+Also check out the [changelog](https://github.com/jakads/Randosu/wiki/Changelog).
 
 ## TODO
 
