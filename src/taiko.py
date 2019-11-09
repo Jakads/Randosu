@@ -78,6 +78,7 @@ def randosu(path, content):
             
             content[index] = f'Version:Randomized({switch}%)_{diffname} (Seed:{randseed})\n'
             filename = f'{os.path.dirname(path)}\\rand({switch})_{randseed}_{sanitize_filename(diffname)}.osu'
+            break
     
     i = 0
 

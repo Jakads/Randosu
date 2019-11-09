@@ -106,6 +106,7 @@ def randosu(path, content):
 
             content[index] = f'Version:{Rand}_{diffname} (Seed:{randseed})\n'
             filename = f'{os.path.dirname(path)}\\{rand}_{randseed}_{sanitize_filename(diffname)}.osu'
+            break
     
     i=0
     randnotes = []
@@ -188,6 +189,8 @@ def randosu(path, content):
                 'extra': n['extra']
             })
         i+=1
+
+        print(n['ms'])
     
         
     with open(filename,'w',encoding='utf-8') as osu:
