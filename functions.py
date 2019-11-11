@@ -17,8 +17,20 @@ def intro():
         'yes',
         'epic',
         'More visual layouts coming soon:tm:',
+        'Unrelated to Randoseru, I swear',
+        'Selecting from osu!client feature when?',
+        'It might not seem random, but it is as random as it can be (Gambler\'s Fallacy)',
+        'The Ultimate Map Shittifier for all modes in osu!',
+        'Results are only for your viewing pleasure',
+        'I am not responsible for any shockingly shitty patterns this might generate',
+        'I am desperately looking for help in some upcoming features, please contact me if you are interested',
+        'I should have coded this in a different language lol',
+        'real gamer moment',
+        'Aren\'t you getting tired of this boring white text on a boring black screen?',
+        'delet this',
+        'Hope you\'re having a great day!'
     ]
-    introweight = [30] + [10] + [1] * (len(introlist) - 2)
+    introweight = [50] + [5] + [1] * (len(introlist) - 2)
     return choices(introlist, introweight)[0]
 
 def crash():
@@ -35,7 +47,15 @@ def crash():
         'When you mix up the pattern too intensely',
         'damn',
         'h',
-        'the fuck'
+        'the fuck',
+        'I told you to not do this...',
+        'I knew this was a bad idea...',
+        'This must be just a bad dream.',
+        'am i retarded',
+        'bruh',
+        'ew this map sucks, that\'s why i crashed',
+        'bruh moment',
+        'I am out of words.'
     ]
     return choices(crashlist)[0]
 
