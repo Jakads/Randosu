@@ -192,7 +192,7 @@ if __name__ == '__main__':
     
         print('Mode: ' + mode.get(gamemode))
         fn = sys.stdin.fileno()
-        proc = Process(target=std.random, args=(q, fn, sys.argv[1], content))
+        proc = Process(target=target.get(gamemode), args=(q, fn, sys.argv[1], content))
         # https://stackoverflow.com/questions/7489967
     
         proc.start()
