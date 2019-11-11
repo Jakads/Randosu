@@ -32,3 +32,5 @@ Also check out the [changelog](https://github.com/jakads/Randosu/wiki/Changelog)
 
 - Calculating the end of sliders (preventing out of bounds)
 - Fetching selected map of osu! process (i know zero of WinAPI)
+
+unrelated to randoseru smh
