@@ -262,5 +262,5 @@ if __name__ == '__main__':
             c.write('\n\nFull Log:\n\n')
             c.write('\n'.join(log))
         webbrowser.open('https://github.com/jakads/Randosu/issues')
-        print(f'\nThe crashlog is saved as {crashlog}.')
+        print(f'\nThe crashlog has been saved as {crashlog}.')
         exit('Please tell the dev about this!')
