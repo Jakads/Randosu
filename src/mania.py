@@ -112,9 +112,9 @@ def random(q, fn, path, content):
     # {col, endms}
     occtime = []
 
-    # Dictionary List tracking the end time of occupation for the last 16th beat
+    # Dictionary List tracking the end time of occupation for the last 1/{snap} snap
     # {col, endms}
-    occ16time = []
+    occsnaptime = []
     
     # Random Seed input
     print('Import success.')
@@ -131,6 +131,16 @@ def random(q, fn, path, content):
     print('Enable Scatter? (minimum jacks) (Y/N)')
     Scatter = True if choose() else False
     q.put(f'Scatter = {Scatter}')
+
+    if Scatter:
+        print('16th Beat = 1/4 Snap, 24th Beat = 1/6 Snap, ...')
+        while True:
+            snap = inputnum('Avoid "x" and Shorter Jacks (default 1/4): 1/', 4)
+            if int(snap) == snap:
+                snap = int(snap)
+                break
+            print('Please insert a natural number.')
+        q.put(f'snap = {snap}')
     
     # Proportion of switching columns
     while True:
@@ -141,7 +151,7 @@ def random(q, fn, path, content):
             if Scatter:
                 switch = 0
                 break
-            print("what's the point?")
+            print("What's the point?")
         else:
             break
     q.put(f'switch = {switch}')
@@ -164,9 +174,11 @@ def random(q, fn, path, content):
 
             Rand = "Randomized" if not Scatter else "Scattered"
             rand = "rand" if not Scatter else "scat"
+            Snaptext = f", No 1/{snap} Jacks" if Scatter else ""
+            snaptext = f",{snap}" if Scatter else ""
 
-            content[content.index(c)] = f'Version:{Rand}({switch}%)_{diffname} (Seed:{randseed})\n'
-            filename = f'{os.path.dirname(path)}\\{rand}({switch})_{randseed}_{sanitize_filename(diffname)}.osu'
+            content[content.index(c)] = f'Version:{Rand}({switch}%{Snaptext})_{diffname} (Seed:{randseed})\n'
+            filename = f'{os.path.dirname(path)}\\{rand}({switch}{snaptext})_{randseed}_{sanitize_filename(diffname)}.osu'
             break
     
     i = 0
@@ -188,9 +200,9 @@ def random(q, fn, path, content):
         # Defaults to [False, False, ..., False]
         Occupied = keys * [False]
     
-        # Int, Boolean List for checking the previous occupation for the last 16th beat (used for Scatter)
+        # Int, Boolean List for checking the previous occupation for the last 1/{snap} snap (used for Scatter)
         # Defaults to [False, False, ..., False]
-        Last16Occupied = keys * [False]
+        LastSnapOccupied = keys * [False]
 
         # Get current ms per beat
         mpb = -1
@@ -221,20 +233,20 @@ def random(q, fn, path, content):
         for o in occtime[:]:
             Occupied[o['col']] = True
 
-        for o in occ16time[:]:
+        for o in occsnaptime[:]:
             if n['ms'] > o['endms']:
-                occ16time.remove(o)
-        for o in occ16time[:]:
-            Last16Occupied[o['col']] = True
+                occsnaptime.remove(o)
+        for o in occsnaptime[:]:
+            LastSnapOccupied[o['col']] = True
         
-        # If no switch, (and if scatter, if not last16occupied,) keep the column
-        if not Switch[i] and not Occupied[n['col']] and (not Scatter or not Last16Occupied[n['col']]):
+        # If no switch, (and if scatter, if not LastSnapOccupied,) keep the column
+        if not Switch[i] and not Occupied[n['col']] and (not Scatter or not LastSnapOccupied[n['col']]):
             randcol = n['col']
         # If switch, Get an unoccupied column
         else:
             # leftcol: not Occupied, possible columns
             # goodcol: not Occupied AND not LastOccupied, desired columns
-            # bestcol: not Occupied AND not Last16Occupied, most desired columns
+            # bestcol: not Occupied AND not LastSnapOccupied, most desired columns
             bestcol = []
             goodcol = []
             leftcol = []
@@ -242,7 +254,7 @@ def random(q, fn, path, content):
             for j in range(keys):
                 if not Occupied[j]:
                     leftcol.append(j)
-                    if not Last16Occupied[j]:
+                    if not LastSnapOccupied[j]:
                         bestcol.append(j)
                     if not LastOccupied[j]:
                         goodcol.append(j)
@@ -261,10 +273,10 @@ def random(q, fn, path, content):
                     else:
                         randcol = randint(0, keys-1)
 
-        occ16time.append({
+        occsnaptime.append({
             'col': randcol,
             # Getting the ceil value just in case of an unsnapped note
-            'endms': n['ms'] + ceil(mpb / 4)
+            'endms': n['ms'] + ceil(mpb / snap)
         })
         
         # if LN:
