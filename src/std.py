@@ -73,7 +73,7 @@ def random(q, fn, path, content):
                 'isSlider': len(content_split) > 7
             })
             k += 1
-            q.put(f'append to notes ({k}@{content_split[0]})')
+            q.put(f'append to notes ({k}@{note_ms})')
 
         q.put(f'notes import success')
 

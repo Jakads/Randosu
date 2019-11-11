@@ -95,7 +95,7 @@ def random(q, fn, path, content):
                     'extra': content_split[1:]
                 })
             k += 1
-            q.put(f'append to notes ({k}@{content_split[0]})')
+            q.put(f'append to notes ({k}@{note_ms})')
 
         q.put(f'notes import success')
         
