@@ -7,10 +7,14 @@ from pathvalidate import sanitize_filename
 from functions import choose, inputnum, exit
 from math import ceil
 
-def randosu(path, content):
+def random(q, fn, path, content):
+    sys.stdin = os.fdopen(fn)
+    
     try:
         # CS = Keys
         keys = [int(i.split(':')[1]) for i in content if i.split(':')[0] == 'CircleSize'][0]
+        print(f'Keys: {keys}')
+        q.put(f'keys = {keys}')
         
         # Generate the x-coordinates of each column
         colrange = [512*column/keys for column in range(keys+1)]
@@ -22,10 +26,13 @@ def randosu(path, content):
         notes = []
 
         bpmindex = content.index('[TimingPoints]\n')
+        q.put(f'bpmindex = {bpmindex}')
         
         objindex = content.index('[HitObjects]\n')
+        q.put(f'objindex = {objindex}')
 
         # Parse BPMs from the next row of [TimingPoints] to [HitObjects]
+        k = 0
         for c in content[bpmindex+1:objindex]:
             # BPM Points: ms,60000/BPM,[],[],[],[],1,[]
             # 60000/BPM = ms per beat
@@ -41,8 +48,13 @@ def randosu(path, content):
                     'ms': float(content_split[0]),
                     'mpb': float(content_split[1])
                 })
+                k += 1
+                q.put(f'append to bpms ({k}@{content_split[0]})')
+
+        q.put(f'bpms import success')
 
         # Parse notes from the next row of [HitObjects] to EOF
+        k = 0
         for c in content[objindex+1:]:
             # Ignore comments and blanks
             if c.startswith('//') or c == '\n':
@@ -78,6 +90,10 @@ def randosu(path, content):
                     'col': note_col,
                     'ms': note_ms
                 })
+            k += 1
+            q.put(f'append to notes ({k}@{content_split[0]})')
+
+        q.put(f'notes import success')
         
         # Sort by ms
         # https://stackoverflow.com/questions/72899
@@ -102,12 +118,15 @@ def randosu(path, content):
 
     # If no seed is given, use current timestamp as the seed
     if randseed == '':
+        q.put('no seed given')
         randseed = int(time())
     seed(randseed)
+    q.put(f'seed = {randseed}')
     
     # Scatter
     print('Enable Scatter? (minimum jacks) (Y/N)')
     Scatter = True if choose() else False
+    q.put(f'Scatter = {Scatter}')
     
     # Proportion of switching columns
     while True:
@@ -121,6 +140,7 @@ def randosu(path, content):
             print("what's the point?")
         else:
             break
+    q.put(f'switch = {switch}')
 
     switchnum = int(len(notes) * (switch / 100))
     # Generate switch bool list according to the proportion
@@ -136,6 +156,8 @@ def randosu(path, content):
             # Exclude '\n'
             diffname = c.split(':', 1)[1][:-1]
     
+            q.put(f'replaced Version on line {content.index(c)+1}')
+
             Rand = "Randomized" if not Scatter else "Scattered"
             rand = "rand" if not Scatter else "scat"
 
@@ -143,9 +165,9 @@ def randosu(path, content):
             filename = f'{os.path.dirname(path)}\\{rand}({switch})_{randseed}_{sanitize_filename(diffname)}.osu'
             break
     
-    i=0
+    i = 0
 
-    # f = open('test.log',mode='w',encoding='utf-8')
+    q.put('== Randomization Start ==')
         
     # Int, Boolean List for checking the previous occupation (used for Scatter)
     # Defaults to [False, False, ..., False]
@@ -156,6 +178,8 @@ def randosu(path, content):
     
     # Randomize position of the notes
     for n in notes:
+        q.put(f'{i+1}@{n["ms"]}')
+        
         # Boolean List for checking if the column is occupied or not
         # Defaults to [False, False, ..., False]
         Occupied = keys * [False]
@@ -268,16 +292,18 @@ def randosu(path, content):
 
         i += 1
         
-        # f.write(f'{randcol} | {n["ms"]}, {ceil(mpb/4)}, {bestcol}, {goodcol}, {leftcol}\n')
+        q.put(f'{randcol} | best={bestcol}, good={goodcol}, left={leftcol}')
     
-    # f.close()
+    q.put(f'exporting to {filename}:')
     with open(filename,'w',encoding='utf-8') as osu:
         col = [int(512*(2*column+1)/(2*keys)) for column in range(keys)]
 
         for c in content[:objindex+1]:
             osu.write(c)
+            q.put(c)
     
         for n in randnotes:
+            q.put(','.join(n))
             # if LN:
             if 'endms' in n:
                 osu.write(f'{col[n["col"]]},192,{n["ms"]},128,0,{n["endms"]}\n')
@@ -287,3 +313,5 @@ def randosu(path, content):
                 osu.write(f'{col[n["col"]]},192,{n["ms"]},1,0\n')
     
     print(f'\nSuccessfully created {filename}!')
+    
+    q.put('done')

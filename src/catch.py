@@ -6,7 +6,9 @@ from time import time
 from pathvalidate import sanitize_filename
 from functions import choose, inputnum, exit
 
-def randosu(path, content):
+def random(q, fn, path, content):
+    sys.stdin = os.fdopen(fn)
+
     try:
         # Dictionary List for notes
         notes = []
@@ -14,12 +16,15 @@ def randosu(path, content):
         # Change Stack Leniency to 0
         for c in content:
             if c.startswith('StackLeniency:'):
+                q.put(f'replaced StackLeniency on line {content.index(c)+1}')
                 content[content.index(c)] = 'StackLeniency:0\n'
                 break
         
         objindex = content.index('[HitObjects]\n')
+        q.put(f'objindex = {objindex}')
         
         # Parse notes from the next row of [HitObjects] to EOF
+        k = 0
         for c in content[objindex+1:]:
             # Ignore comments and blanks
             if c.startswith('//') or c == '\n':
@@ -36,6 +41,10 @@ def randosu(path, content):
                 'extra': note_extra,
                 'isSlider': len(content_split) > 7
             })
+            k += 1
+            q.put(f'append to notes ({k})')
+
+        q.put(f'notes import success')
     
     except:
         exit('Import failed. The .osu file is invalid.')
@@ -46,11 +55,14 @@ def randosu(path, content):
 
     # If no seed is given, use current timestamp as the seed
     if randseed == '':
+        q.put('no seed given')
         randseed = int(time())
     seed(randseed)
+    q.put(f'seed = {randseed}')
     
     print('True Random? (Y/N)')
     TrueRandom = True if choose() else False
+    q.put(f'TrueRandom = {TrueRandom}')
     
     if not TrueRandom:
         minsf = inputnum('Min Scale Factor(Default: 0.8): ', 0.8)
@@ -62,6 +74,8 @@ def randosu(path, content):
             minsf = maxsf
             maxsf = tmp
     
+        q.put(f'minsf = {minsf}, maxsf = {maxsf}')
+
     red = inputnum('Chance of Red Anchors(%, default 25): ', 25)
     
     if red > 100:
@@ -69,6 +83,8 @@ def randosu(path, content):
     if red < 0:
         red = 0
     
+    q.put(f'red = {red}')
+
     # Change difficulty & output file name
     for c in content:
         if c.startswith('Version:'):
@@ -76,6 +92,8 @@ def randosu(path, content):
             diffname = c.split(':', 1)[1][:-1]
             index = content.index(c)
     
+            q.put(f'replaced Version on line {content.index(c)+1}')
+
             rand = f"truerand({red})" if TrueRandom else f"rand({minsf}~{maxsf},{red})"
             Rand = f"TrueRandomized(Red:{red}%)" if TrueRandom else f"Randomized({minsf}~{maxsf}x, Red:{red}%)"
             
@@ -83,11 +101,14 @@ def randosu(path, content):
             filename = f'{os.path.dirname(path)}\\{rand}_{randseed}_{sanitize_filename(diffname)}.osu'
             break
     
-    i=0
+    i = 0
     randnotes = []
+
+    q.put('== Randomization Start ==')
     
     # Randomize position of the notes
     for n in notes:
+        q.put(f'{i+1}@{n["ms"]}')
         # Distance should be lower than set
         while True:
             if (i == 0) or TrueRandom:
@@ -139,14 +160,20 @@ def randosu(path, content):
                 'ms': n['ms'],
                 'extra': n['extra']
             })
-        i+=1
+        i += 1
+        q.put(f'x={randx}, diffx={diffx}, nextdistance={notes[i+1]["x"] - notes[i]["x"] if i < len(notes) - 1 else ""}')
     
         
+    q.put(f'exporting to {filename}:')
     with open(filename,'w',encoding='utf-8') as osu:
         for c in content[:objindex+1]:
             osu.write(c)
+            q.put(c)
     
         for n in randnotes:
             osu.write(f'{n["x"]},192,{n["ms"]},{",".join(n["extra"])}')
+            q.put(','.join(n))
     
     print(f'\nSuccessfully created {filename}!')
+
+    q.put('done')
