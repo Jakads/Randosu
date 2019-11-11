@@ -76,19 +76,23 @@ def random(q, fn, path, content):
         
             if note_LN:
                 note_endms = int(content_split[5].split(':')[0])
-        
-                # {col, ms, endms}
+
+                # Copy everything except col as "extra"
+                # This includes everything about hitsounds
+                # {col, ms, endms, extra}
                 notes.append({
                     'col': note_col,
                     'ms': note_ms,
-                    'endms': note_endms
+                    'endms': note_endms,
+                    'extra': content_split[1:]
                 })
         
             else:
-                # {col, ms}
+                # {col, ms, extra}
                 notes.append({
                     'col': note_col,
-                    'ms': note_ms
+                    'ms': note_ms,
+                    'extra': content_split[1:]
                 })
             k += 1
             q.put(f'append to notes ({k}@{content_split[0]})')
@@ -256,38 +260,36 @@ def random(q, fn, path, content):
                     
                     else:
                         randcol = randint(0, keys-1)
+
+        occ16time.append({
+            'col': randcol,
+            # Getting the ceil value just in case of an unsnapped note
+            'endms': n['ms'] + ceil(mpb / 4)
+        })
         
         # if LN:
         if 'endms' in n:
             randnotes.append({
                 'col': randcol,
                 'ms': n['ms'],
-                'endms': n['endms']
+                'endms': n['endms'],
+                'extra': n['extra']
             })
             occtime.append({
                 'col': randcol,
                 'endms': n['endms']
-            })
-            occ16time.append({
-                'col': randcol,
-                # Getting the ceil value just in case of an unsnapped note
-                'endms': n['ms'] + ceil(mpb / 4)
             })
         
         # if regular note:
         else:
             randnotes.append({
                 'col': randcol,
-                'ms': n['ms']
+                'ms': n['ms'],
+                'extra': n['extra']
             })
             occtime.append({
                 'col': randcol,
                 'endms': n['ms']
-            })
-            occ16time.append({
-                'col': randcol,
-                # Getting the ceil value just in case of an unsnapped note
-                'endms': n['ms'] + ceil(mpb / 4)
             })
 
         i += 1
@@ -306,11 +308,11 @@ def random(q, fn, path, content):
             q.put(','.join(n))
             # if LN:
             if 'endms' in n:
-                osu.write(f'{col[n["col"]]},192,{n["ms"]},128,0,{n["endms"]}\n')
+                osu.write(f'{col[n["col"]]},{",".join(n["extra"])}\n')
             
             # if regular note:
             else:
-                osu.write(f'{col[n["col"]]},192,{n["ms"]},1,0\n')
+                osu.write(f'{col[n["col"]]},{",".join(n["extra"])}\n')
     
     print(f'\nSuccessfully created {filename}!')
     
