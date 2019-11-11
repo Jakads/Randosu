@@ -9,3 +9,4 @@ src/__pycache__/
 build/
 dist/
 .vscode/
+.pytest_cache/
