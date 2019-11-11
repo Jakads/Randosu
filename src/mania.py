@@ -135,7 +135,7 @@ def random(q, fn, path, content):
     if Scatter:
         print('16th Beat = 1/4 Snap, 24th Beat = 1/6 Snap, ...')
         while True:
-            snap = inputnum('Avoid "x" and Shorter Jacks (default 1/4): 1/', 4)
+            snap = inputnum('Avoid Jacks "x" and Shorter (default 1/4): 1/', 4)
             if int(snap) == snap:
                 snap = int(snap)
                 break
