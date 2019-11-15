@@ -28,10 +28,14 @@ def random(q, fn, path, content):
             
             # Syntax: x, y, extra
             content_split = c.split(',')
+            note_ms = int(content_split[2])
+
+            k += 1
         
             # Normal note is either 1 or 5(new combo)
             if int(content_split[3]) % 2 != 1:
                 othernotes.append(c)
+                q.put(f'append to othernotes ({k}@{note_ms})')
             
             else:
                 note_extra1 = content_split[:4]
@@ -40,10 +44,10 @@ def random(q, fn, path, content):
                 notes.append({
                     'extra1': note_extra1,
                     'type': note_type,
-                    'extra2': note_extra2
+                    'extra2': note_extra2,
+                    'ms': note_ms
                 })
-            k += 1
-            q.put(f'append to notes ({k}@{content_split[2]})')
+                q.put(f'append to notes ({k}@{note_ms})')
 
         q.put(f'notes import success')
     
