@@ -25,12 +25,48 @@ def intro():
         'I am not responsible for any shockingly shitty patterns this might generate',
         'I am desperately looking for help in some upcoming features, please contact me if you are interested',
         'I should have coded this in a different language lol',
-        'real gamer moment',
+        'epic gamer moment',
         'Aren\'t you getting tired of this boring white text on a boring black screen?',
         'delet this',
-        'Hope you\'re having a great day!'
+        'Hope you\'re having a great day!',
+        'you\'re here yet again to suffer',
+        'imagine implementing machine learning into this',
+        'Come on in! New map every single time!',
+        'no u',
+        'python is too slow for this and I kinda regret coding in it',
+        'But what is... Random? *VSauce Music Plays*',
+        'Now with 1 percent less bug!',
+        '''
+            According to all known laws
+            of aviation,
+            
+              
+            there is no way a bee
+            should be able to fly.
+            
+              
+            Its wings are too small to get
+            its fat little body off the ground.
+            
+              
+            The bee, of course, flies anyway
+            
+              
+            because bees don't care
+            what humans think is impossible.
+            
+              
+            Yellow, black. Yellow, black.
+            Yellow, black. Yellow, black.
+            
+              
+            Ooh, black and yellow!
+            Let's shake it up a little.
+        ''',
+        'owo',
+        'uwu'
     ]
-    introweight = [50] + [5] + [1] * (len(introlist) - 2)
+    introweight = [100] + [5] + [1] * (len(introlist) - 2)
     return choices(introlist, introweight)[0]
 
 def crash():
@@ -55,7 +91,38 @@ def crash():
         'bruh',
         'ew this map sucks, that\'s why i crashed',
         'bruh moment',
-        'I am out of words.'
+        'I am out of words.',
+        '''
+            According to all known laws
+            of aviation,
+            
+              
+            there is no way a bee
+            should be able to fly.
+            
+              
+            Its wings are too small to get
+            its fat little body off the ground.
+            
+              
+            The bee, of course, flies anyway
+            
+              
+            because bees don't care
+            what humans think is impossible.
+            
+              
+            Yellow, black. Yellow, black.
+            Yellow, black. Yellow, black.
+            
+              
+            Ooh, black and yellow!
+            Let's shake it up a little.
+        ''',
+        'I\'m not mad... I\'m just disappointed.',
+        'You know I have feelings too, right?',
+        'This is intentional. I can feel it in my guts. You did this.',
+        'eh not a big deal'
     ]
     return choices(crashlist)[0]
 
