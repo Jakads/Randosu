@@ -12,9 +12,13 @@ import traceback
 from datetime import datetime
 from tqdm import tqdm
 from functions import intro, crash, choose, exit
-from multiprocessing import Queue, Process
+from multiprocessing import Queue, Process, freeze_support
 
 if __name__ == '__main__':
+    # https://github.com/pyinstaller/pyinstaller/wiki/Recipe-Multiprocessing
+    # damn..
+    freeze_support()
+
     # Logging time in ms
     t = lambda: f'[{int((time.time() - start) * 1000)}] '
     
@@ -41,8 +45,8 @@ if __name__ == '__main__':
     
     log = []
     
-    version = '0.3.0'
-    date = '2019-11-12'
+    version = '0.3.1'
+    date = '2019-11-16'
     
     # Change window title
     ctypes.windll.kernel32.SetConsoleTitleW(f'Rand(osu!) v{version}')
