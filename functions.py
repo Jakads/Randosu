@@ -64,7 +64,8 @@ def intro():
             Let's shake it up a little.
         ''',
         'owo',
-        'uwu'
+        'uwu',
+        'ok boomer'
     ]
     introweight = [100] + [5] + [1] * (len(introlist) - 2)
     return choices(introlist, introweight)[0]
@@ -122,7 +123,8 @@ def crash():
         'I\'m not mad... I\'m just disappointed.',
         'You know I have feelings too, right?',
         'This is intentional. I can feel it in my guts. You did this.',
-        'eh not a big deal'
+        'eh not a big deal',
+        'ok boomer'
     ]
     return choices(crashlist)[0]
 
