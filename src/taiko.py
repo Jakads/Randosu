@@ -68,7 +68,7 @@ def random(q, fn, path, content):
     seed(randseed)
     q.put(f'seed = {randseed}')
 
-    print('True Random? (Y/N)')
+    print('Enable True Random? (Y/N)')
     TrueRandom = True if choose() else False
     q.put(f'TrueRandom = {TrueRandom}')
     
