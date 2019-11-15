@@ -25,7 +25,7 @@ def intro():
         'I am not responsible for any shockingly shitty patterns this might generate',
         'I am desperately looking for help in some upcoming features, please contact me if you are interested',
         'I should have coded this in a different language lol',
-        'epic gamer moment',
+        'real gamer moment',
         'Aren\'t you getting tired of this boring white text on a boring black screen?',
         'delet this',
         'Hope you\'re having a great day!',
