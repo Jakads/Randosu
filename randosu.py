@@ -227,14 +227,14 @@ if __name__ == '__main__':
                     if msg == '== Randomization Start ==':
                         Randomization = True
 
-                    # Get current index and 
-                    if msg.startswith('@'):
-                        objms = int(msg[1:-2])
-
                     # Get current object index and ms
                     if '@' in msg and Randomization:
-                        objindex = int(msg.split('@')[0])
-                        objms = int(msg.split('@')[1])
+                        # In case @ is in metadata (e.g. cosmo@bousou)
+                        try:
+                            objindex = int(msg.split('@')[0])
+                            objms = int(msg.split('@')[1])
+                        except:
+                            pass
     
                     # If message is "done", break from the loop
                     if msg == "done":
