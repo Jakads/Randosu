@@ -21,6 +21,7 @@ def random(q, fn, path, content):
         
         # Parse notes from the next row of [HitObjects] to EOF
         k = 0
+        kk = 0
         for c in content[objindex+1:]:
             # Ignore comments and blanks
             if c.startswith('//') or c == '\n':
@@ -30,11 +31,11 @@ def random(q, fn, path, content):
             content_split = c.split(',')
             note_ms = int(content_split[2])
 
-            k += 1
         
             # Normal note is either 1 or 5(new combo)
             if int(content_split[3]) % 2 != 1:
                 othernotes.append(c)
+                k += 1
                 q.put(f'append to othernotes ({k}@{note_ms})')
             
             else:
@@ -47,7 +48,8 @@ def random(q, fn, path, content):
                     'extra2': note_extra2,
                     'ms': note_ms
                 })
-                q.put(f'append to notes ({k}@{note_ms})')
+                kk += 1
+                q.put(f'append to notes ({kk}@{note_ms})')
 
         q.put(f'notes import success')
     
