@@ -18,16 +18,6 @@ Like this:
 For details, check out the [wiki](https://github.com/jakads/Randosu/wiki).
 Also check out the [changelog](https://github.com/jakads/Randosu/wiki/Changelog).
 
-## TODO
-
-- Debug feature (Secret settings)
-- Language feature
-- More randomization options
-- Friendlier UI using TKinter
-- Auto-select .osu file to randomize using osu client (something like osu!StreamCompanion's Now Playing feature)
-- Calculate the end of sliders to prevent sliderends going out of bounds
-  * Any help about this is greatly appreciated
-
 ## PLEASE CONTACT ME IF YOU CAN HELP
 
 - Calculating the end of sliders (preventing out of bounds)
