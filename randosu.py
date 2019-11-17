@@ -13,6 +13,7 @@ from datetime import datetime
 from tqdm import tqdm
 from functions import intro, crash, choose, exit
 from multiprocessing import Queue, Process, freeze_support
+import queue
 
 if __name__ == '__main__':
     # https://github.com/pyinstaller/pyinstaller/wiki/Recipe-Multiprocessing
@@ -42,6 +43,13 @@ if __name__ == '__main__':
                 }.get(num % 10, 'th')
     
             return str(num) + suffix
+
+    class ParsingException(Exception):
+        def __init__(self):
+            pass
+
+        def __str__(self):
+            return 'encountered unexpected error while parsing objects'
     
     log = []
     
@@ -185,7 +193,7 @@ if __name__ == '__main__':
         try:
             # 0: Standard, 1: Taiko, 2: CTB, 3: Mania
             gamemode = [int(i.split(':')[1]) for i in content if i.split(':')[0] == 'Mode'][0]
-            log.append(t() + f'gamemode: {gamemode}')
+            log.append(t() + f'gamemode = {gamemode}')
         
         except:
             exit('Import failed. The .osu file is invalid.')
@@ -205,6 +213,7 @@ if __name__ == '__main__':
         Randomization = False
         objms = 0
         objindex = 0
+        crashmsg = 'None\n'
     
         while True:
             try:
@@ -218,6 +227,21 @@ if __name__ == '__main__':
                 # If message has been sent, append to log list
                 if msg != None:
                     log.append(t() + msg)
+
+                    # In case of Ctrl+C
+                    if msg == 'quit':
+                        proc.terminate()
+                        q.close()
+                        q.join_thread()
+                        exit('\n\noof')
+
+                    # If the process itself crashes...
+                    if msg.startswith('Traceback (most recent call last):'):
+                        crashmsg = msg
+                        proc.terminate()
+                        q.close()
+                        q.join_thread()
+                        raise ParsingException
 
                     # Get objindex from message
                     if msg.startswith('objindex = '):
@@ -244,7 +268,7 @@ if __name__ == '__main__':
                         break
     
             # If no message has been sent for 5 seconds however...
-            except: 
+            except queue.Empty: 
                 proc.terminate()
                 q.close()
                 q.join_thread()
@@ -252,6 +276,9 @@ if __name__ == '__main__':
     
         exit('Press F5 in osu! to try out the result!')
     
+    except KeyboardInterrupt:
+        exit('\n\noof')
+
     ### GENERATING CRASHLOG ###
     except Exception as e:
         print(f'\n\n\nFATAL ERROR: {repr(e)}\n')
@@ -259,10 +286,13 @@ if __name__ == '__main__':
         crashlog = f'CrashLog_{datetime.now().strftime("%Y%m%d%H%M%S")}.log'
         with open(crashlog,mode='w',encoding='utf-8') as c:
             c.write(crash())
-            c.write(f'\n\nTarget File: {sys.argv[1]}\n')
+            c.write(f'\n\nTarget File: {sys.argv[1]}\n\n')
             c.write('If you would like to tell the dev about this issue, please attach the file above with this crash report.\n')
             c.write('DO NOT EDIT ANYTHING WRITTEN HERE.\n\n')
+            c.write('Main Traceback:\n')
             c.write(traceback.format_exc())
+            c.write('\n\nProcess Traceback (if available):\n')
+            c.write(crashmsg)
             c.write('\n\nFull Log:\n\n')
             c.write('\n'.join(log))
         webbrowser.open('https://github.com/jakads/Randosu/issues')
