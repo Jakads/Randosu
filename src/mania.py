@@ -276,7 +276,7 @@ def random(q, fn, path, content):
         occsnaptime.append({
             'col': randcol,
             # Getting the ceil value just in case of an unsnapped note
-            'endms': n['ms'] + ceil(mpb / snap)
+            'endms': n['ms'] + ceil(mpb / snap) if Scatter else n['ms']
         })
         
         # if LN:
