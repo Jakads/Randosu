@@ -53,8 +53,8 @@ if __name__ == '__main__':
     
     log = []
     
-    version = '0.3.1'
-    date = '2019-11-16'
+    version = '0.3.2'
+    date = '2019-11-17'
     
     # Change window title
     ctypes.windll.kernel32.SetConsoleTitleW(f'Rand(osu!) v{version}')
