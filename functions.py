@@ -65,7 +65,10 @@ def intro():
         ''',
         'owo',
         'uwu',
-        'ok boomer'
+        'ok boomer',
+        'I put way too much effort into the crash report',
+        '!uso ni sedom lla rof rezimodnaR paM etamitlU ehT',
+        'Running out of ideas'
     ]
     introweight = [100] + [5] + [1] * (len(introlist) - 2)
     return choices(introlist, introweight)[0]
@@ -124,7 +127,9 @@ def crash():
         'You know I have feelings too, right?',
         'This is intentional. I can feel it in my guts. You did this.',
         'eh not a big deal',
-        'ok boomer'
+        'ok boomer',
+        'Well, this is awkward...',
+        'AaaaaAAaaaAAAaaAAAAaAAAAA!!!!!'
     ]
     return choices(crashlist)[0]
 
